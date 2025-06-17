@@ -35,6 +35,10 @@ export const GridPreview: React.FC<GridPreviewProps> = ({
         useUnifiedStore ? state.parsedGardenData : null
     );
 
+    // Get watering functionality from unified store
+    const toggleCropWateredFromGrid = useUnifiedGardenStore(state => state.toggleCropWateredFromGrid);
+    const trackedCrops = useUnifiedGardenStore(state => state.trackedCrops);
+
     // Use unified store data if available, otherwise use prop data
     const gardenData = useUnifiedStore ? storedParsedGardenData : propGardenData;
 
@@ -59,7 +63,7 @@ export const GridPreview: React.FC<GridPreviewProps> = ({
     // Calculate responsive dimensions and tile size
     const { tileSize, containerMaxWidth, containerMaxHeight } = useMemo(() => {
         if (!gardenData) return { tileSize: 32, containerMaxWidth: 400, containerMaxHeight: 300 };
-        
+
         const { rows, columns } = gardenData.dimensions;
 
         // Responsive container dimensions
@@ -114,7 +118,45 @@ export const GridPreview: React.FC<GridPreviewProps> = ({
     const handleTileClick = (tile: GridTile) => {
         if (onTileClick) {
             onTileClick(tile);
+        } else if (useUnifiedStore && tile.cropType) {
+            // If using unified store and tile has a crop, toggle watering for that crop type
+            toggleCropWateredFromGrid(tile.cropType);
         }
+    };
+
+    // Enhanced tile rendering with watering state
+    const renderTileWithWateringState = (tile: GridTile, size: number) => {
+        if (useUnifiedStore && tile.cropType) {
+            // Find the tracked crop to get watering state
+            const trackedCrop = trackedCrops.find(crop => crop.cropType === tile.cropType);
+            if (trackedCrop) {
+                // Override tile's needsWater based on tracked crop's watering state
+                const enhancedTile = {
+                    ...tile,
+                    needsWater: !trackedCrop.isWatered
+                };
+                return (
+                    <div className="cursor-pointer hover:opacity-80 transition-opacity">
+                        <TileComponent
+                            tile={enhancedTile}
+                            size={size}
+                            showTooltip={size >= (screenSize === 'sm' ? 20 : 24)}
+                            onClick={handleTileClick}
+                        />
+                    </div>
+                );
+            }
+        }
+
+        // Default tile rendering
+        return (
+            <TileComponent
+                tile={tile}
+                size={size}
+                showTooltip={size >= (screenSize === 'sm' ? 20 : 24)}
+                onClick={onTileClick ? handleTileClick : undefined}
+            />
+        );
     };
 
     if (loading) {
@@ -216,12 +258,7 @@ export const GridPreview: React.FC<GridPreviewProps> = ({
                                                 className="flex-shrink-0"
                                                 style={{ width: tileSize, height: tileSize }}
                                             >
-                                                <TileComponent
-                                                    tile={tile}
-                                                    size={tileSize}
-                                                    showTooltip={tileSize >= (screenSize === 'sm' ? 20 : 24)}
-                                                    onClick={onTileClick ? handleTileClick : undefined}
-                                                />
+                                                {renderTileWithWateringState(tile, tileSize)}
                                             </div>
                                         ))}
                                     </div>

@@ -46,7 +46,8 @@ export const MainTracker: React.FC = () => {
         dailyWateringState,
         isInitialized,
         resetDailyWatering,
-        initializeCropDatabase
+        initializeCropDatabase,
+        addCropManually
     } = useUnifiedGardenStore();
 
     // Handle mounting for hydration safety
@@ -229,6 +230,14 @@ export const MainTracker: React.FC = () => {
             }
         }
     }, [mounted]);
+
+    // Test function to add sample crops for demonstration
+    const addSampleCrops = () => {
+        addCropManually('Wheat');
+        addCropManually('Tomato');
+        addCropManually('Potato');
+        addCropManually('Blueberry');
+    };
 
     // Prevent hydration mismatch by not rendering until mounted
     if (!mounted) {
@@ -459,32 +468,8 @@ export const MainTracker: React.FC = () => {
                             <span className="text-foreground">Night (21-3)</span>
                         </div>
                     </div>
-                </div>
 
-                {/* Crop Watering Tracker */}
-                <Card className="mt-4">
-                    <CardHeader>
-                        <div className="flex items-center justify-between">
-                            <CardTitle className="text-lg font-semibold">🌱 Daily Crop Watering</CardTitle>
-                            <div className="text-sm text-muted-foreground">Resets at 6:00 AM</div>
-                        </div>
-                    </CardHeader>
-                    <CardContent>
-                        {trackedCrops.length === 0 ? (
-                            <div className="text-muted-foreground text-center py-4">
-                                <p className='text-lg'>No crops tracked.</p>
-                                <p className='mt-4 text-sm text-muted-foreground'>Please click the Import button on top navigation to get started.</p>
-                            </div>
-                        ) : (
-                            <>
-                                <WateringControls />
-                            </>
-                        )}
-                    </CardContent>
-                </Card>
-
-                {/* Last 5 Cycles Watering Status */}
-                <div>
+                    {/* Last 5 Cycles Watering Status */}
                     <Card className="mt-4">
                         <CardHeader>
                             <div className="flex items-center justify-between">
@@ -551,14 +536,45 @@ export const MainTracker: React.FC = () => {
                                     </div>
                                 )}
                             </div>
-                            <GridPreview
-                                    className="w-full h-full"
-                                    useUnifiedStore={true}
-                                    showGrid={true}
-                                />
                         </CardContent>
                     </Card>
                 </div>
+
+
+                {/* Crop Watering Tracker */}
+                <Card className="mt-4 col-span-2">
+                    <CardHeader>
+                        <div className="flex items-center justify-between">
+                            <CardTitle className="text-lg font-semibold">🌱 Daily Crop Watering</CardTitle>
+                            <div className="text-sm text-muted-foreground">Resets at 6:00 AM</div>
+                        </div>
+                    </CardHeader>
+                    <CardContent>
+                        {trackedCrops.length === 0 ? (
+                            <div className="text-muted-foreground text-center py-4">
+                                <p className='text-lg'>No crops tracked.</p>
+                                <p className='mt-4 text-sm text-muted-foreground'>Please click the Import button on top navigation to get started.</p>
+                                <Button
+                                    onClick={addSampleCrops}
+                                    className="mt-4"
+                                    variant="outline"
+                                >
+                                    Add Sample Crops (Test)
+                                </Button>
+                            </div>
+                        ) : (
+                            <>
+                                <WateringControls />
+                            </>
+                        )}
+                    </CardContent>
+                </Card>
+
+                <GridPreview
+                    className="w-full h-full col-span-full"
+                    useUnifiedStore={true}
+                    showGrid={true}
+                />
             </div>
 
         </div>

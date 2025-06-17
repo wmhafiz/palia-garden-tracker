@@ -75,7 +75,7 @@ export const TileComponent: React.FC<TileComponentProps> = ({
             case 'Lettuce': return '🥬';
             case 'Cotton': return '🌱';
             case 'Apple': return '🍎';
-            case 'Blueberry': return '🫐';
+            // Removed 'Blueberry': return '🫐'; so it uses the image instead
             case 'Bok Choy': return '🥬';
             case 'Napa Cabbage': return '🥬';
             case 'Spicy Pepper': return '🌶️';
@@ -114,7 +114,7 @@ export const TileComponent: React.FC<TileComponentProps> = ({
         const borderColor = wateringMode
             ? (tile.needsWater ? 'border-red-500 bg-red-50' : 'border-green-500 bg-green-50')
             : (tile.needsWater ? 'border-red-400 bg-red-50' : 'border-green-400 bg-green-50');
-        
+
         const hoverEffects = onClick
             ? (wateringMode
                 ? 'cursor-pointer hover:scale-110 hover:shadow-lg hover:border-blue-500 hover:bg-blue-50'
@@ -164,9 +164,8 @@ export const TileComponent: React.FC<TileComponentProps> = ({
                         {/* Water Drop Indicator for Needs Water */}
                         {tile.needsWater && (
                             <div
-                                className={`absolute bottom-0 left-0 rounded-full border border-white ${
-                                    wateringMode ? 'bg-red-500 animate-pulse' : 'bg-blue-500'
-                                }`}
+                                className={`absolute bottom-0 left-0 rounded-full border border-white ${wateringMode ? 'bg-red-500 animate-pulse' : 'bg-blue-500'
+                                    }`}
                                 style={{
                                     width: Math.max(6, size * 0.15),
                                     height: Math.max(6, size * 0.15)
@@ -174,9 +173,8 @@ export const TileComponent: React.FC<TileComponentProps> = ({
                                 title="Needs Water"
                             >
                                 <div className="w-full h-full flex items-center justify-center">
-                                    <div className={`rounded-full ${
-                                        wateringMode ? 'w-1.5 h-1.5 bg-white' : 'w-1 h-1 bg-white'
-                                    }`} />
+                                    <div className={`rounded-full ${wateringMode ? 'w-1.5 h-1.5 bg-white' : 'w-1 h-1 bg-white'
+                                        }`} />
                                 </div>
                             </div>
                         )}

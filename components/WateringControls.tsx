@@ -25,13 +25,12 @@ export const WateringControls: React.FC<WateringControlsProps> = ({
     // Store actions and state
     const waterAllCrops = useUnifiedGardenStore(state => state.waterAllCrops);
     const waterNoneCrops = useUnifiedGardenStore(state => state.waterNoneCrops);
-    const setIndividualWateringMode = useUnifiedGardenStore(state => state.setIndividualWateringMode);
-    
+
     // CRITICAL FIX: Use React.useMemo to properly memoize the watering grid data
     // This prevents infinite re-renders by ensuring stable references
     const trackedCrops = useUnifiedGardenStore(state => state.trackedCrops);
     const isLoading = useUnifiedGardenStore(state => state.isLoading);
-    
+
     // Memoize the watering grid data computation to prevent infinite loops
     const wateringGridData = React.useMemo(() => {
         return useUnifiedGardenStore.getState().getWateringGridData();
@@ -50,39 +49,24 @@ export const WateringControls: React.FC<WateringControlsProps> = ({
         waterNoneCrops();
     };
 
-    // Handle individual watering mode toggle for a specific crop
-    const handleWateringModeToggle = (cropType: string, enabled: boolean) => {
-        if (isLoading) return;
-        setIndividualWateringMode(cropType, enabled);
-    };
-
-    // Calculate statistics
-    const cropsWithIndividualMode = Object.values(crops).filter(crop => crop.wateringMode === 'individual').length;
-    const cropsWithBulkMode = Object.values(crops).filter(crop => crop.wateringMode === 'bulk').length;
+    // All crops now use bulk watering mode - no mode switching needed
 
     if (globalStats.totalCrops === 0) {
         return (
-            <Card className={className}>
-                <CardContent className="flex items-center justify-center p-8">
+            <div className={className}>
+                <div className="flex items-center justify-center p-8">
                     <div className="text-center">
                         <div className="text-gray-500 mb-2">💧 No crops to water</div>
                         <p className="text-gray-400 text-sm">Add crops to your tracker to see watering controls</p>
                     </div>
-                </CardContent>
-            </Card>
+                </div>
+            </div>
         );
     }
 
     return (
-        <Card className={`w-full ${className}`}>
-            <CardHeader className={compactMode ? 'pb-3' : ''}>
-                <CardTitle className={`flex items-center gap-2 ${compactMode ? 'text-base' : 'text-lg'}`}>
-                    <Droplets className="h-5 w-5 text-blue-500" />
-                    Watering Controls
-                </CardTitle>
-            </CardHeader>
-
-            <CardContent className={`space-y-4 ${compactMode ? 'pt-0' : ''}`}>
+        <div className={`w-full ${className}`}>
+            <div className={`space-y-4 ${compactMode ? 'pt-0' : ''}`}>
                 {/* Global Watering Actions */}
                 <div className="space-y-3">
                     <div className="flex items-center justify-between">
@@ -126,8 +110,8 @@ export const WateringControls: React.FC<WateringControlsProps> = ({
                     {/* Progress Bar */}
                     {showStatistics && !compactMode && (
                         <div className="space-y-2">
-                            <Progress 
-                                value={globalStats.wateringPercentage} 
+                            <Progress
+                                value={globalStats.wateringPercentage}
                                 className="h-2"
                             />
                             <div className="flex justify-between text-xs text-gray-600">
@@ -138,69 +122,49 @@ export const WateringControls: React.FC<WateringControlsProps> = ({
                     )}
                 </div>
 
-                {/* Individual Crop Mode Toggles */}
-                {showModeToggle && trackedCrops.some(crop => crop.source === 'import') && (
+                {/* Crop List - Simplified without mode toggles */}
+                {trackedCrops.length > 0 && (
                     <div className="space-y-3 border-t pt-4">
                         <div className="flex items-center gap-2">
                             <Settings className="h-4 w-4 text-gray-500" />
                             <span className={`font-medium ${compactMode ? 'text-sm' : 'text-base'}`}>
-                                Watering Modes
+                                Crop Status
                             </span>
                         </div>
 
                         <div className="space-y-2">
-                            {trackedCrops
-                                .filter(crop => crop.source === 'import')
-                                .map(crop => {
-                                    const cropData = crops[crop.cropType];
-                                    const isIndividualMode = cropData?.wateringMode === 'individual';
-                                    
-                                    return (
-                                        <div
-                                            key={crop.cropType}
-                                            className={`flex items-center justify-between p-2 rounded-lg border ${compactMode ? 'text-sm' : ''}`}
-                                        >
-                                            <div className="flex items-center gap-2">
-                                                <span className="font-medium">{crop.cropType}</span>
-                                                <Badge variant="outline" className="text-xs">
-                                                    {crop.totalCount} plants
-                                                </Badge>
-                                                {cropData && (
-                                                    <Badge 
-                                                        variant={isIndividualMode ? "default" : "secondary"}
-                                                        className="text-xs"
-                                                    >
-                                                        {isIndividualMode ? 'Individual' : 'Bulk'}
-                                                    </Badge>
-                                                )}
-                                            </div>
+                            {trackedCrops.map(crop => {
+                                const cropData = crops[crop.cropType];
 
-                                            <div className="flex items-center gap-2">
-                                                {cropData && (
-                                                    <span className="text-xs text-gray-600">
-                                                        {cropData.wateringPercentage}%
-                                                    </span>
-                                                )}
-                                                <Switch
-                                                    checked={isIndividualMode}
-                                                    onCheckedChange={(enabled) =>
-                                                        handleWateringModeToggle(crop.cropType, enabled)
-                                                    }
-                                                    disabled={isLoading}
-                                                />
-                                            </div>
+                                return (
+                                    <div
+                                        key={crop.cropType}
+                                        className={`flex items-center justify-between p-2 rounded-lg border ${compactMode ? 'text-sm' : ''}`}
+                                    >
+                                        <div className="flex items-center gap-2">
+                                            <span className="font-medium">{crop.cropType}</span>
+                                            <Badge variant="outline" className="text-xs">
+                                                {crop.totalCount} plants
+                                            </Badge>
                                         </div>
-                                    );
-                                })}
-                        </div>
 
-                        {!compactMode && (
-                            <div className="text-xs text-gray-600 bg-gray-50 p-2 rounded">
-                                <strong>Individual Mode:</strong> Water each plant separately for precise control.
-                                <br />
-                                <strong>Bulk Mode:</strong> Water all plants of this crop type together.
-                            </div>
-                        )}
+                                        <div className="flex items-center gap-2">
+                                            {cropData && (
+                                                <span className="text-xs text-gray-600">
+                                                    {cropData.wateringPercentage}%
+                                                </span>
+                                            )}
+                                            <Badge
+                                                variant={crop.isWatered ? "default" : "secondary"}
+                                                className="text-xs"
+                                            >
+                                                {crop.isWatered ? 'Watered' : 'Needs Water'}
+                                            </Badge>
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
                     </div>
                 )}
 
@@ -230,12 +194,12 @@ export const WateringControls: React.FC<WateringControlsProps> = ({
 
                             <div className="space-y-1">
                                 <div className="flex justify-between">
-                                    <span className="text-gray-600">Individual Mode:</span>
-                                    <span className="font-medium">{cropsWithIndividualMode}</span>
+                                    <span className="text-gray-600">Watered Crops:</span>
+                                    <span className="font-medium text-green-600">{trackedCrops.filter(crop => crop.isWatered).length}</span>
                                 </div>
                                 <div className="flex justify-between">
-                                    <span className="text-gray-600">Bulk Mode:</span>
-                                    <span className="font-medium">{cropsWithBulkMode}</span>
+                                    <span className="text-gray-600">Remaining:</span>
+                                    <span className="font-medium">{trackedCrops.filter(crop => !crop.isWatered).length}</span>
                                 </div>
                                 <div className="flex justify-between">
                                     <span className="text-gray-600">Progress:</span>
@@ -255,7 +219,7 @@ export const WateringControls: React.FC<WateringControlsProps> = ({
                         <span className="ml-2 text-sm text-gray-600">Updating...</span>
                     </div>
                 )}
-            </CardContent>
-        </Card>
+            </div>
+        </div>
     );
 };

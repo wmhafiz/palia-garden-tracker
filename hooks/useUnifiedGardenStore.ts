@@ -21,10 +21,6 @@ import {
     CropMetadata,
     CompleteWateringGridState,
     WateringGridData,
-    createGridLayout,
-    findPlantByPosition,
-    findPlantById,
-    calculateWateringStats
 } from '../types/watering-grid';
 
 /**
@@ -143,7 +139,9 @@ export const useUnifiedGardenStore = create<UnifiedGardenStore>()(
                     version: CURRENT_VERSION,
                     trackedCrops: updatedCrops,
                     dailyWateringState: state.dailyWateringState,
-                    migratedFromLegacy: false
+                    migratedFromLegacy: false,
+                    originalLayoutUrl: state.originalLayoutUrl,
+                    parsedGardenData: state.parsedGardenData
                 });
 
                 return {
@@ -166,7 +164,9 @@ export const useUnifiedGardenStore = create<UnifiedGardenStore>()(
                     version: CURRENT_VERSION,
                     trackedCrops: updatedCrops,
                     dailyWateringState: state.dailyWateringState,
-                    migratedFromLegacy: false
+                    migratedFromLegacy: false,
+                    originalLayoutUrl: state.originalLayoutUrl,
+                    parsedGardenData: state.parsedGardenData
                 });
 
                 return {
@@ -248,7 +248,9 @@ export const useUnifiedGardenStore = create<UnifiedGardenStore>()(
                     version: CURRENT_VERSION,
                     trackedCrops: updatedCrops,
                     dailyWateringState: state.dailyWateringState,
-                    migratedFromLegacy: false
+                    migratedFromLegacy: false,
+                    originalLayoutUrl: state.originalLayoutUrl,
+                    parsedGardenData: state.parsedGardenData
                 });
 
                 return {
@@ -276,7 +278,9 @@ export const useUnifiedGardenStore = create<UnifiedGardenStore>()(
                     version: CURRENT_VERSION,
                     trackedCrops: updatedCrops,
                     dailyWateringState: state.dailyWateringState,
-                    migratedFromLegacy: false
+                    migratedFromLegacy: false,
+                    originalLayoutUrl: state.originalLayoutUrl,
+                    parsedGardenData: state.parsedGardenData
                 });
 
                 return {
@@ -302,7 +306,9 @@ export const useUnifiedGardenStore = create<UnifiedGardenStore>()(
                     version: CURRENT_VERSION,
                     trackedCrops: updatedCrops,
                     dailyWateringState: state.dailyWateringState,
-                    migratedFromLegacy: false
+                    migratedFromLegacy: false,
+                    originalLayoutUrl: state.originalLayoutUrl,
+                    parsedGardenData: state.parsedGardenData
                 });
 
                 return {
@@ -329,7 +335,9 @@ export const useUnifiedGardenStore = create<UnifiedGardenStore>()(
                     version: CURRENT_VERSION,
                     trackedCrops: updatedCrops,
                     dailyWateringState: updatedWateringState,
-                    migratedFromLegacy: false
+                    migratedFromLegacy: false,
+                    originalLayoutUrl: state.originalLayoutUrl,
+                    parsedGardenData: state.parsedGardenData
                 });
 
                 return {
@@ -393,7 +401,9 @@ export const useUnifiedGardenStore = create<UnifiedGardenStore>()(
                     version: CURRENT_VERSION,
                     trackedCrops: [],
                     dailyWateringState: state.dailyWateringState,
-                    migratedFromLegacy: false
+                    migratedFromLegacy: false,
+                    originalLayoutUrl: state.originalLayoutUrl,
+                    parsedGardenData: state.parsedGardenData
                 });
 
                 return {
@@ -429,7 +439,9 @@ export const useUnifiedGardenStore = create<UnifiedGardenStore>()(
                     version: CURRENT_VERSION,
                     trackedCrops: updatedCrops,
                     dailyWateringState: state.dailyWateringState,
-                    migratedFromLegacy: false
+                    migratedFromLegacy: false,
+                    originalLayoutUrl: state.originalLayoutUrl,
+                    parsedGardenData: state.parsedGardenData
                 });
 
                 return {
@@ -621,76 +633,33 @@ export const useUnifiedGardenStore = create<UnifiedGardenStore>()(
             }
         },
 
-        // Grid-specific watering actions
-        togglePlantWateredByPosition: (cropType: string, row: number, col: number) => {
+        // Simplified watering action - clicking any crop toggles the entire crop type
+        toggleCropWateredFromGrid: (cropType: string) => {
             set((state) => {
                 const updatedCrops = state.trackedCrops.map(crop => {
-                    if (crop.cropType === cropType && crop.wateringMode === 'individual' && crop.gridLayout) {
-                        const plant = findPlantByPosition(crop.gridLayout, row, col);
-                        if (plant) {
-                            const updatedPlants = crop.gridLayout.plants.map(p =>
-                                p.row === row && p.col === col
-                                    ? { ...p, isWatered: !p.isWatered, lastWateredAt: !p.isWatered ? new Date() : p.lastWateredAt }
-                                    : p
-                            );
-                            
-                            return {
-                                ...crop,
-                                gridLayout: {
-                                    ...crop.gridLayout,
-                                    plants: updatedPlants
-                                }
-                            };
-                        }
+                    if (crop.cropType === cropType) {
+                        const newWateredState = !crop.isWatered;
+                        return {
+                            ...crop,
+                            isWatered: newWateredState,
+                            lastWateredAt: newWateredState ? new Date() : crop.lastWateredAt
+                        };
                     }
                     return crop;
                 });
+
+                // CRITICAL FIX: Invalidate cache when watering state changes
+                cachedWateringGridData = null;
+                lastTrackedCropsHash = null;
 
                 // Persist changes
                 persistenceUtils.savePersistedData({
                     version: CURRENT_VERSION,
                     trackedCrops: updatedCrops,
                     dailyWateringState: state.dailyWateringState,
-                    migratedFromLegacy: false
-                });
-
-                return {
-                    trackedCrops: updatedCrops,
-                    lastError: null
-                };
-            });
-        },
-
-        togglePlantWateredById: (cropType: string, plantId: string) => {
-            set((state) => {
-                const updatedCrops = state.trackedCrops.map(crop => {
-                    if (crop.cropType === cropType && crop.wateringMode === 'individual' && crop.gridLayout) {
-                        const plant = findPlantById(crop.gridLayout, plantId);
-                        if (plant) {
-                            const updatedPlants = crop.gridLayout.plants.map(p =>
-                                p.id === plantId
-                                    ? { ...p, isWatered: !p.isWatered, lastWateredAt: !p.isWatered ? new Date() : p.lastWateredAt }
-                                    : p
-                            );
-                            
-                            return {
-                                ...crop,
-                                gridLayout: {
-                                    ...crop.gridLayout,
-                                    plants: updatedPlants
-                                }
-                            };
-                        }
-                    }
-                    return crop;
-                });
-
-                // Persist changes
-                persistenceUtils.savePersistedData({
-                    version: CURRENT_VERSION,
-                    trackedCrops: updatedCrops,
-                    dailyWateringState: state.dailyWateringState,
-                    migratedFromLegacy: false
+                    migratedFromLegacy: false,
+                    originalLayoutUrl: state.originalLayoutUrl,
+                    parsedGardenData: state.parsedGardenData
                 });
 
                 return {
@@ -718,21 +687,13 @@ export const useUnifiedGardenStore = create<UnifiedGardenStore>()(
             let wateredPlants = 0;
 
             for (const crop of state.trackedCrops) {
-                let wateredCount = 0;
-                let wateringPercentage = 0;
-
-                if (crop.wateringMode === 'bulk') {
-                    wateredCount = crop.isWatered ? crop.totalCount : 0;
-                    wateringPercentage = crop.isWatered ? 100 : 0;
-                } else if (crop.gridLayout) {
-                    const stats = calculateWateringStats(crop.gridLayout);
-                    wateredCount = stats.wateredCount;
-                    wateringPercentage = stats.wateringPercentage;
-                }
+                // Simplified: all crops use bulk watering mode
+                const wateredCount = crop.isWatered ? crop.totalCount : 0;
+                const wateringPercentage = crop.isWatered ? 100 : 0;
 
                 crops[crop.cropType] = {
                     cropType: crop.cropType,
-                    wateringMode: crop.wateringMode,
+                    wateringMode: 'bulk' as const,
                     gridLayout: crop.gridLayout,
                     bulkWatered: crop.isWatered,
                     wateredCount,
@@ -765,137 +726,7 @@ export const useUnifiedGardenStore = create<UnifiedGardenStore>()(
             return result;
         },
 
-        waterAllPlantsInGrid: (cropType: string) => {
-            set((state) => {
-                const updatedCrops = state.trackedCrops.map(crop => {
-                    if (crop.cropType === cropType) {
-                        if (crop.wateringMode === 'individual' && crop.gridLayout) {
-                            const now = new Date();
-                            const updatedPlants = crop.gridLayout.plants.map(plant => ({
-                                ...plant,
-                                isWatered: true,
-                                lastWateredAt: now
-                            }));
-                            
-                            return {
-                                ...crop,
-                                gridLayout: {
-                                    ...crop.gridLayout,
-                                    plants: updatedPlants
-                                }
-                            };
-                        } else {
-                            // Bulk mode
-                            return {
-                                ...crop,
-                                isWatered: true,
-                                lastWateredAt: new Date()
-                            };
-                        }
-                    }
-                    return crop;
-                });
-
-                // Persist changes
-                persistenceUtils.savePersistedData({
-                    version: CURRENT_VERSION,
-                    trackedCrops: updatedCrops,
-                    dailyWateringState: state.dailyWateringState,
-                    migratedFromLegacy: false
-                });
-
-                return {
-                    trackedCrops: updatedCrops,
-                    lastError: null
-                };
-            });
-        },
-
-        waterNonePlantsInGrid: (cropType: string) => {
-            set((state) => {
-                const updatedCrops = state.trackedCrops.map(crop => {
-                    if (crop.cropType === cropType) {
-                        if (crop.wateringMode === 'individual' && crop.gridLayout) {
-                            const updatedPlants = crop.gridLayout.plants.map(plant => ({
-                                ...plant,
-                                isWatered: false
-                            }));
-                            
-                            return {
-                                ...crop,
-                                gridLayout: {
-                                    ...crop.gridLayout,
-                                    plants: updatedPlants
-                                }
-                            };
-                        } else {
-                            // Bulk mode
-                            return {
-                                ...crop,
-                                isWatered: false
-                            };
-                        }
-                    }
-                    return crop;
-                });
-
-                // Persist changes
-                persistenceUtils.savePersistedData({
-                    version: CURRENT_VERSION,
-                    trackedCrops: updatedCrops,
-                    dailyWateringState: state.dailyWateringState,
-                    migratedFromLegacy: false
-                });
-
-                return {
-                    trackedCrops: updatedCrops,
-                    lastError: null
-                };
-            });
-        },
-
-        setIndividualWateringMode: (cropType: string, enabled: boolean) => {
-            set((state) => {
-                const updatedCrops = state.trackedCrops.map(crop => {
-                    if (crop.cropType === cropType) {
-                        if (enabled && crop.source === 'import' && crop.plantInstances.length > 0) {
-                            // Switch to individual mode - create grid layout
-                            const gridLayout = createGridLayout(crop.plantInstances);
-                            return {
-                                ...crop,
-                                wateringMode: 'individual' as const,
-                                gridLayout
-                            };
-                        } else if (!enabled) {
-                            // Switch to bulk mode - remove grid layout
-                            return {
-                                ...crop,
-                                wateringMode: 'bulk' as const,
-                                gridLayout: undefined
-                            };
-                        }
-                    }
-                    return crop;
-                });
-
-                // CRITICAL FIX: Invalidate cache when watering mode changes
-                cachedWateringGridData = null;
-                lastTrackedCropsHash = null;
-
-                // Persist changes
-                persistenceUtils.savePersistedData({
-                    version: CURRENT_VERSION,
-                    trackedCrops: updatedCrops,
-                    dailyWateringState: state.dailyWateringState,
-                    migratedFromLegacy: false
-                });
-
-                return {
-                    trackedCrops: updatedCrops,
-                    lastError: null
-                };
-            });
-        },
+        // Removed individual watering mode functions - only bulk watering now
 
         // Crop database actions
         initializeCropDatabase: async () => {
@@ -970,17 +801,15 @@ export const initializeUnifiedStore = async () => {
     const persistedData = persistenceUtils.loadPersistedData();
 
     if (persistedData) {
-        // Migrate existing data to support new grid features
+        // Migrate existing data to support simplified bulk-only watering
         const migratedCrops = persistedData.trackedCrops.map(crop => {
-            // Add missing fields for backward compatibility
-            if (!crop.wateringMode) {
-                return {
-                    ...crop,
-                    wateringMode: 'bulk' as const,
-                    gridLayout: undefined
-                };
-            }
-            return crop;
+            // Ensure all crops use bulk watering mode
+            return {
+                ...crop,
+                wateringMode: 'bulk' as const,
+                // Keep gridLayout for display purposes but not for individual watering
+                gridLayout: crop.gridLayout
+            };
         });
 
         // Load from persisted data
@@ -1001,7 +830,9 @@ export const initializeUnifiedStore = async () => {
                 version: CURRENT_VERSION,
                 trackedCrops: migratedCrops,
                 dailyWateringState: persistedData.dailyWateringState,
-                migratedFromLegacy: persistedData.migratedFromLegacy
+                migratedFromLegacy: persistedData.migratedFromLegacy,
+                originalLayoutUrl: persistedData.originalLayoutUrl,
+                parsedGardenData: persistedData.parsedGardenData
             });
         }
     } else {

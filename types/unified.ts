@@ -14,15 +14,15 @@ export interface TrackedCrop {
     plantInstances: Plant[];
     /** Total count of this crop type */
     totalCount: number;
-    /** Daily watering state (for bulk watering mode) */
+    /** Daily watering state (bulk watering only) */
     isWatered: boolean;
     /** When this crop was added to tracking */
     addedAt: Date;
-    /** Last time this crop was watered (bulk mode) */
+    /** Last time this crop was watered */
     lastWateredAt?: Date;
-    /** Watering mode: 'bulk' for all-or-nothing, 'individual' for per-plant tracking */
-    wateringMode: WateringMode;
-    /** Grid layout for individual plant watering (only when wateringMode is 'individual') */
+    /** Watering mode: always 'bulk' now */
+    wateringMode: 'bulk';
+    /** Grid layout for display purposes (not used for individual watering) */
     gridLayout?: CropGridLayout;
 }
 
@@ -119,18 +119,10 @@ export interface UnifiedGardenStoreActions {
     setOriginalLayoutData: (url: string, parsedData: import('../types/layout').ParsedGardenData) => void;
     
     // Grid-specific watering actions
-    /** Toggle individual plant watering by grid position */
-    togglePlantWateredByPosition: (cropType: string, row: number, col: number) => void;
-    /** Toggle individual plant watering by plant ID */
-    togglePlantWateredById: (cropType: string, plantId: string) => void;
+    /** Toggle crop watering from grid (simplified - toggles entire crop type) */
+    toggleCropWateredFromGrid: (cropType: string) => void;
     /** Get grid data for watering interface */
     getWateringGridData: () => import('./watering-grid').CompleteWateringGridState;
-    /** Water all plants in a specific crop's grid */
-    waterAllPlantsInGrid: (cropType: string) => void;
-    /** Water no plants in a specific crop's grid */
-    waterNonePlantsInGrid: (cropType: string) => void;
-    /** Switch between bulk and individual watering modes */
-    setIndividualWateringMode: (cropType: string, enabled: boolean) => void;
     
     // Crop database actions
     /** Initialize crop database from JSON */
@@ -176,7 +168,7 @@ export const validateTrackedCrop = (crop: any): crop is TrackedCrop => {
         typeof crop.totalCount === 'number' &&
         typeof crop.isWatered === 'boolean' &&
         crop.addedAt instanceof Date &&
-        ['bulk', 'individual'].includes(crop.wateringMode) &&
+        crop.wateringMode === 'bulk' &&
         (crop.gridLayout === undefined || typeof crop.gridLayout === 'object')
     );
 };
@@ -210,8 +202,8 @@ export const createTrackedCrop = (
     totalCount: source === 'manual' ? 1 : plantInstances.length,
     isWatered: false,
     addedAt: new Date(),
-    wateringMode: 'bulk', // Default to bulk watering mode
-    gridLayout: undefined, // No grid layout by default
+    wateringMode: 'bulk', // Always bulk watering mode
+    gridLayout: undefined, // Grid layout for display only
 });
 
 export const groupPlantsByType = (plants: Plant[]): { [cropType: string]: Plant[] } => {
