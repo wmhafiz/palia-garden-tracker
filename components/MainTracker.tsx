@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation';
 import { MigrationBanner } from './MigrationBanner';
 import { GridPreviewTest } from './GridPreviewTest';
 import { WateringControls } from './WateringControls';
-import { WateringGridPreview } from './WateringGridPreview';
 import { GridPreview } from './GridPreview';
 import { useUnifiedGardenStore, initializeUnifiedStore } from '@/hooks/useUnifiedGardenStore';
 import { Button } from '@/components/ui/button';
@@ -554,13 +553,6 @@ export const MainTracker: React.FC = () => {
                             <div className="text-muted-foreground text-center py-4">
                                 <p className='text-lg'>No crops tracked.</p>
                                 <p className='mt-4 text-sm text-muted-foreground'>Please click the Import button on top navigation to get started.</p>
-                                <Button
-                                    onClick={addSampleCrops}
-                                    className="mt-4"
-                                    variant="outline"
-                                >
-                                    Add Sample Crops (Test)
-                                </Button>
                             </div>
                         ) : (
                             <>

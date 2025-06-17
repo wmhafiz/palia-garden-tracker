@@ -244,17 +244,6 @@ export const GridPreview: React.FC<GridPreviewProps> = ({
                                     maxWidth: '100%'
                                 }}
                             >
-                                {(() => {
-                                    console.log('🔍 DEBUG: Garden structure:', {
-                                        totalTileRows: gardenData.tiles.length,
-                                        totalTileColumns: gardenData.tiles[0]?.length || 0,
-                                        activePlots: gardenData.activePlots,
-                                        plotRows: gardenData.activePlots.length,
-                                        plotColumns: gardenData.activePlots[0]?.length || 0
-                                    });
-                                    return null;
-                                })()}
-
                                 {/* Render plots in a grid layout */}
                                 <div
                                     className="grid gap-4"

@@ -10,6 +10,7 @@ import {
     LayoutSearchOptions
 } from '../../types/layout';
 import { parseGridData } from './plannerService';
+import { DEFAULT_LAYOUTS } from '../data/defaultLayouts';
 
 /**
  * Default configuration for the layout service
@@ -486,9 +487,55 @@ export class LayoutService {
         }
     }
 
+    /**
+     * Load default layouts when user has no saved layouts
+     */
+    loadDefaultLayouts(): LayoutOperationResult<number> {
+        try {
+            const existingLayouts = this.getAllLayoutsRaw();
+            
+            // Only load defaults if no layouts exist
+            if (existingLayouts.length > 0) {
+                return {
+                    success: true,
+                    data: 0 // No layouts loaded since user already has layouts
+                };
+            }
+
+            // Create copies of default layouts with current timestamps
+            const defaultLayoutsWithCurrentTime = DEFAULT_LAYOUTS.map(layout => ({
+                ...layout,
+                metadata: {
+                    ...layout.metadata,
+                    createdAt: new Date(),
+                    lastModified: new Date()
+                }
+            }));
+
+            this.saveToStorage(defaultLayoutsWithCurrentTime);
+
+            return {
+                success: true,
+                data: defaultLayoutsWithCurrentTime.length
+            };
+        } catch (error) {
+            return {
+                success: false,
+                error: {
+                    type: LayoutError.STORAGE_ERROR,
+                    message: 'Failed to load default layouts',
+                    details: error
+                }
+            };
+        }
+    }
+
     // Private helper methods
 
-    private getAllLayouts(): SavedLayout[] {
+    /**
+     * Get layouts from storage without loading defaults
+     */
+    private getAllLayoutsRaw(): SavedLayout[] {
         try {
             const data = localStorage.getItem(this.storageKey);
             if (!data) return [];
@@ -499,6 +546,23 @@ export class LayoutService {
             console.error('Failed to load layouts from storage:', error);
             return [];
         }
+    }
+
+    /**
+     * Get all layouts, automatically loading defaults if none exist
+     */
+    private getAllLayouts(): SavedLayout[] {
+        const layouts = this.getAllLayoutsRaw();
+        
+        // If no layouts exist, load defaults
+        if (layouts.length === 0) {
+            const defaultResult = this.loadDefaultLayouts();
+            if (defaultResult.success) {
+                return this.getAllLayoutsRaw();
+            }
+        }
+        
+        return layouts;
     }
 
     private saveToStorage(layouts: SavedLayout[]): void {
