@@ -1,22 +1,20 @@
 'use client';
 
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useUnifiedGardenStore } from '@/hooks/useUnifiedGardenStore';
 import { parseGridData } from '@/lib/services/plannerService';
 import { ParsedGardenData, SavedLayout } from '@/types/layout';
 import { GridPreview } from '@/components/GridPreview';
 import { CropSummaryComponent } from '@/components/CropSummaryComponent';
-import { layoutService } from '@/lib/services/layoutService';
+import { SavedLayoutsSection } from '@/components/SavedLayoutsSection';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { ArrowLeft, Search, Star, Trash2, AlertTriangle, Download, Save, FileText } from 'lucide-react';
+import { AlertTriangle, Download, Save, FileText, Star } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
 type ImportMode = 'url' | 'saved';
@@ -35,10 +33,7 @@ export default function ImportPage() {
     const [saveLoading, setSaveLoading] = useState(false);
 
     // Saved layouts state
-    const [savedLayouts, setSavedLayouts] = useState<SavedLayout[]>([]);
     const [selectedLayout, setSelectedLayout] = useState<SavedLayout | null>(null);
-    const [searchQuery, setSearchQuery] = useState('');
-    const [sortBy, setSortBy] = useState<'name' | 'createdAt' | 'lastModified'>('lastModified');
 
     const { saveAndLoadLayout, loadLayoutById } = useUnifiedGardenStore();
 
@@ -69,62 +64,17 @@ export default function ImportPage() {
         }
     }, [url]);
 
-    const loadSavedLayouts = useCallback(() => {
-        const result = layoutService.searchLayouts({
-            query: searchQuery,
-            sortBy,
-            sortDirection: 'desc'
-        });
-
-        if (result.success) {
-            setSavedLayouts(result.data || []);
-        } else {
-            setError(result.error?.message || 'Failed to load saved layouts');
-        }
-    }, [searchQuery, sortBy]);
-
-    useEffect(() => {
-        if (importMode === 'saved') {
-            loadSavedLayouts();
-        }
-    }, [importMode, loadSavedLayouts, searchQuery, sortBy]);
-
-    const handleClose = useCallback(() => {
-        router.push('/');
-    }, [router]);
-
-    const handleLoadSavedLayout = useCallback((layout: SavedLayout) => {
+    // Handle saved layout selection
+    const handleSavedLayoutSelect = useCallback((layout: SavedLayout) => {
         setSelectedLayout(layout);
         setGardenData(layout.gardenData);
         setLayoutName(layout.metadata.name);
         setShowPreview(true);
     }, []);
 
-    const handleDeleteLayout = useCallback(async (layoutId: string, event: React.MouseEvent) => {
-        event.stopPropagation();
-
-        if (!window.confirm('Are you sure you want to delete this layout?')) {
-            return;
-        }
-
-        const result = layoutService.deleteLayout(layoutId);
-        if (result.success) {
-            loadSavedLayouts();
-        } else {
-            setError(result.error?.message || 'Failed to delete layout');
-        }
-    }, [loadSavedLayouts]);
-
-    const handleToggleFavorite = useCallback(async (layoutId: string, isFavorite: boolean, event: React.MouseEvent) => {
-        event.stopPropagation();
-
-        const result = layoutService.updateLayoutMetadata(layoutId, { isFavorite: !isFavorite });
-        if (result.success) {
-            loadSavedLayouts();
-        } else {
-            setError(result.error?.message || 'Failed to update favorite status');
-        }
-    }, [loadSavedLayouts]);
+    const handleClose = useCallback(() => {
+        router.push('/');
+    }, [router]);
 
     const handleSaveLayout = useCallback(async () => {
         if (!gardenData || !layoutName.trim()) return;
@@ -164,6 +114,7 @@ export default function ImportPage() {
         setShowPreview(false);
         setGardenData(null);
         setLayoutName('');
+        setSelectedLayout(null);
         setError(null);
     }, []);
 
@@ -222,120 +173,17 @@ export default function ImportPage() {
                         </TabsContent>
 
                         <TabsContent value="saved" className="space-y-6">
-                            <Card>
-                                <CardHeader>
-                                    <CardTitle>Saved Layouts</CardTitle>
-                                    <div className="flex gap-4 mt-4">
-                                        <div className="flex-1 relative">
-                                            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4" />
-                                            <Input
-                                                type="text"
-                                                placeholder="Search layouts..."
-                                                value={searchQuery}
-                                                onChange={(e) => setSearchQuery(e.target.value)}
-                                                className="pl-10"
-                                            />
-                                        </div>
-                                        <Select value={sortBy} onValueChange={(value) => setSortBy(value as 'name' | 'createdAt' | 'lastModified')}>
-                                            <SelectTrigger className="w-48">
-                                                <SelectValue />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                <SelectItem value="lastModified">Last Modified</SelectItem>
-                                                <SelectItem value="createdAt">Created Date</SelectItem>
-                                                <SelectItem value="name">Name</SelectItem>
-                                            </SelectContent>
-                                        </Select>
-                                    </div>
-                                </CardHeader>
-                                <CardContent>
-                                    {error && (
-                                        <Alert variant="destructive" className="mb-4">
-                                            <AlertTriangle className="h-4 w-4" />
-                                            <AlertDescription>{error}</AlertDescription>
-                                        </Alert>
-                                    )}
-
-                                    {savedLayouts.length === 0 ? (
-                                        <div className="text-center py-12">
-                                            <FileText className="h-12 w-12 mx-auto mb-4" />
-                                            <p className="text-lg font-medium mb-2">No saved layouts found</p>
-                                            <p className="text-sm">Import and save some layouts to see them here</p>
-                                        </div>
-                                    ) : (
-                                        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                                            {savedLayouts.map((layout) => (
-                                                <Card
-                                                    key={layout.metadata.id}
-                                                    className="cursor-pointer hover:border-blue-300 hover:bg-blue-50 transition-colors"
-                                                    onClick={() => handleLoadSavedLayout(layout)}
-                                                >
-                                                    <CardContent className="p-4">
-                                                        <div className="flex items-start justify-between">
-                                                            <div className="flex-1 min-w-0">
-                                                                <div className="flex items-center gap-2 mb-1">
-                                                                    <h3 className="font-medium truncate">
-                                                                        {layout.metadata.name}
-                                                                    </h3>
-                                                                    {layout.isFavorite && (
-                                                                        <Star className="h-4 w-4 text-yellow-500 fill-current" />
-                                                                    )}
-                                                                </div>
-                                                                <p className="text-sm mb-2">
-                                                                    {layout.metadata.description}
-                                                                </p>
-                                                                <div className="flex items-center gap-4 text-xs">
-                                                                    <span>{layout.metadata.plantCount} plants</span>
-                                                                    <span>{layout.metadata.dimensions.rows}×{layout.metadata.dimensions.columns}</span>
-                                                                    <span>{new Date(layout.metadata.lastModified).toLocaleDateString()}</span>
-                                                                </div>
-                                                                {layout.metadata.dominantCrops.length > 0 && (
-                                                                    <div className="flex gap-1 mt-2 flex-wrap">
-                                                                        {layout.metadata.dominantCrops.slice(0, 3).map((crop) => (
-                                                                            <Badge key={crop} variant="secondary" className="bg-green-100 text-green-700 text-xs">
-                                                                                {crop}
-                                                                            </Badge>
-                                                                        ))}
-                                                                    </div>
-                                                                )}
-                                                            </div>
-                                                            <div className="flex items-center gap-1 ml-2">
-                                                                <Button
-                                                                    onClick={(e) => handleToggleFavorite(layout.metadata.id, layout.isFavorite, e)}
-                                                                    variant="ghost"
-                                                                    size="sm"
-                                                                    className="text-gray-400 hover:text-yellow-500"
-                                                                    title={layout.isFavorite ? 'Remove from favorites' : 'Add to favorites'}
-                                                                >
-                                                                    <Star className={`h-4 w-4 ${layout.isFavorite ? 'fill-current' : ''}`} />
-                                                                </Button>
-                                                                <Button
-                                                                    onClick={(e) => handleDeleteLayout(layout.metadata.id, e)}
-                                                                    variant="ghost"
-                                                                    size="sm"
-                                                                    className="text-gray-400 hover:text-red-500"
-                                                                    title="Delete layout"
-                                                                >
-                                                                    <Trash2 className="h-4 w-4" />
-                                                                </Button>
-                                                            </div>
-                                                        </div>
-                                                    </CardContent>
-                                                </Card>
-                                            ))}
-                                        </div>
-                                    )}
-
-                                    <div className="flex justify-between items-center pt-6 border-t mt-6">
-                                        <span className="text-sm">
-                                            {savedLayouts.length} layout{savedLayouts.length !== 1 ? 's' : ''} found
-                                        </span>
-                                        <Button variant="outline" onClick={handleClose}>
-                                            Cancel
-                                        </Button>
-                                    </div>
-                                </CardContent>
-                            </Card>
+                            <SavedLayoutsSection
+                                onLayoutSelect={handleSavedLayoutSelect}
+                                className="w-full"
+                                showHeader={true}
+                                maxColumns={3}
+                            />
+                            <div className="flex justify-end">
+                                <Button variant="outline" onClick={handleClose}>
+                                    Cancel
+                                </Button>
+                            </div>
                         </TabsContent>
                     </Tabs>
                 ) : (
@@ -439,8 +287,8 @@ export default function ImportPage() {
                                 )}
 
                                 <div className="flex flex-col sm:flex-row gap-3 justify-end">
-                                    <Button variant="outline" onClick={handleClose} disabled={saveLoading}>
-                                        Cancel
+                                    <Button variant="outline" onClick={handleBackToImport} disabled={saveLoading}>
+                                        Back
                                     </Button>
 
                                     {!selectedLayout && (
