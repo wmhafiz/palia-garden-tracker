@@ -2,9 +2,11 @@
 
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { CropWateringItem } from './CropWateringItem';
 import { MigrationBanner } from './MigrationBanner';
 import { GridPreviewTest } from './GridPreviewTest';
+import { WateringControls } from './WateringControls';
+import { WateringGridPreview } from './WateringGridPreview';
+import { GridPreview } from './GridPreview';
 import { useUnifiedGardenStore, initializeUnifiedStore } from '@/hooks/useUnifiedGardenStore';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -28,7 +30,6 @@ interface CycleWateringState {
 }
 
 export const MainTracker: React.FC = () => {
-    const router = useRouter();
     const [mounted, setMounted] = useState(false);
     const [showGridPreviewTest, setShowGridPreviewTest] = useState(false);
     const [currentTime, setCurrentTime] = useState<number>(Date.now());
@@ -37,7 +38,6 @@ export const MainTracker: React.FC = () => {
         cycleHistory: []
     });
 
-    const [allCrops, setAllCrops] = useState<any[]>([]);
     const [showMigrationBanner, setShowMigrationBanner] = useState(true);
 
     // Use unified store
@@ -45,12 +45,8 @@ export const MainTracker: React.FC = () => {
         trackedCrops,
         dailyWateringState,
         isInitialized,
-        addCropManually,
-        removeCrop,
-        toggleCropWatered,
-        waterAllCrops,
-        waterNoneCrops,
-        resetDailyWatering
+        resetDailyWatering,
+        initializeCropDatabase
     } = useUnifiedGardenStore();
 
     // Handle mounting for hydration safety
@@ -83,6 +79,13 @@ export const MainTracker: React.FC = () => {
             initializeUnifiedStore();
         }
     }, [mounted]);
+
+    // Initialize crop database on mount
+    useEffect(() => {
+        if (mounted && isInitialized) {
+            initializeCropDatabase();
+        }
+    }, [mounted, isInitialized, initializeCropDatabase]);
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -154,11 +157,6 @@ export const MainTracker: React.FC = () => {
         };
     }, [currentTime]);
 
-    useEffect(() => {
-        fetch('/crops.json')
-            .then(res => res.json())
-            .then(data => setAllCrops(data.sort((a: any, b: any) => a.base_value - b.base_value)));
-    }, []);
 
     // Handle daily reset logic with unified store
     useEffect(() => {
@@ -194,18 +192,6 @@ export const MainTracker: React.FC = () => {
 
     const getCurrentCycleStatus = (): boolean => {
         return cycleWateringState.cycleHistory.some(cycle => cycle.cycleId === timeData.cycleId && cycle.watered);
-    };
-
-    const handleTrackedCropsChange = (newTracked: string[]) => {
-        const currentCropTypes = trackedCrops.map(crop => crop.cropType);
-
-        // Add new crops
-        const toAdd = newTracked.filter(cropType => !currentCropTypes.includes(cropType));
-        toAdd.forEach(cropType => addCropManually(cropType));
-
-        // Remove crops that are no longer selected
-        const toRemove = currentCropTypes.filter(cropType => !newTracked.includes(cropType));
-        toRemove.forEach(cropType => removeCrop(cropType));
     };
 
     const updateCycleStatus = useCallback(() => {
@@ -267,7 +253,7 @@ export const MainTracker: React.FC = () => {
 
             <div className="w-full max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-3 px-2 sm:px-4">
                 {/* Clock SVG - hidden on small screens */}
-                <div>
+                <div className='max-w-md'>
                     <div className="p-6">
                         <svg
                             viewBox="0 0 200 200"
@@ -491,44 +477,7 @@ export const MainTracker: React.FC = () => {
                             </div>
                         ) : (
                             <>
-                                <div className="flex justify-end gap-2 mb-2">
-                                    <Button
-                                        size="sm"
-                                        className="bg-green-600/80 hover:bg-green-700"
-                                        onClick={() => {
-                                            waterAllCrops();
-                                            updateCycleStatus();
-                                        }}
-                                    >Water All</Button>
-                                    <Button
-                                        size="sm"
-                                        variant="secondary"
-                                        className="bg-gray-400/80 hover:0"
-                                        onClick={() => {
-                                            waterNoneCrops();
-                                            updateCycleStatus();
-                                        }}
-                                    >Water None</Button>
-                                </div>
-                                <div className="space-y-2">
-                                    <ScrollArea className="h-[500px] pr-6">
-                                        {trackedCrops.map(trackedCrop => {
-                                            const cropData = allCrops.find(c => c.name === trackedCrop.cropType);
-                                            return (
-                                                <CropWateringItem
-                                                    key={trackedCrop.cropType}
-                                                    trackedCrop={trackedCrop}
-                                                    cropData={cropData}
-                                                    onToggle={() => {
-                                                        toggleCropWatered(trackedCrop.cropType);
-                                                        updateCycleStatus();
-                                                    }}
-                                                    showDetails={true}
-                                                />
-                                            );
-                                        })}
-                                    </ScrollArea>
-                                </div>
+                                <WateringControls />
                             </>
                         )}
                     </CardContent>
@@ -602,6 +551,11 @@ export const MainTracker: React.FC = () => {
                                     </div>
                                 )}
                             </div>
+                            <GridPreview
+                                    className="w-full h-full"
+                                    useUnifiedStore={true}
+                                    showGrid={true}
+                                />
                         </CardContent>
                     </Card>
                 </div>

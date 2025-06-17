@@ -169,7 +169,7 @@ No environment variables are required for basic functionality. All data is store
 
 ### Customization
 
-- Modify crop data in `public/crops.json`
+- Crop data is now managed through the unified store's crop database
 - Adjust time calculations in `MainTracker.tsx`
 - Customize styling in `app/globals.css`
 

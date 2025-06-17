@@ -463,7 +463,7 @@ export default function ImportPage() {
                                                     }
 
                                                     const { importPlantsFromGarden } = useUnifiedGardenStore.getState();
-                                                    importPlantsFromGarden(plants);
+                                                    importPlantsFromGarden(plants, url, gardenData);
 
                                                     handleClose();
                                                 } catch (err) {

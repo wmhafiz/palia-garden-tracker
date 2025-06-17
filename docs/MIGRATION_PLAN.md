@@ -18,7 +18,7 @@ palia-watering-tracker/
 │   ├── App.tsx              # Main app with React Router
 │   ├── index.tsx            # CRA entry point
 │   └── index.css            # Global styles
-├── public/                  # Static assets (crop images, crops.json)
+├── public/                  # Static assets (crop images)
 ├── docs/                    # Comprehensive documentation
 └── package.json             # CRA dependencies
 ```
@@ -186,7 +186,7 @@ app/
 
 **Assets to Migrate:**
 
-- ✅ `crops.json` - Crop data
+- ✅ Crop data now managed in unified store
 - ✅ `images/` folder - All crop images (65px-\*.webp, Corn.png)
 - ✅ `index.html` - Extract any meta tags/config
 

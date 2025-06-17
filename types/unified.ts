@@ -1,4 +1,5 @@
 import { Plant } from './index';
+import { WateringMode, CropGridLayout } from './watering-grid';
 
 /**
  * Represents a tracked crop in the unified system
@@ -13,12 +14,16 @@ export interface TrackedCrop {
     plantInstances: Plant[];
     /** Total count of this crop type */
     totalCount: number;
-    /** Daily watering state */
+    /** Daily watering state (for bulk watering mode) */
     isWatered: boolean;
     /** When this crop was added to tracking */
     addedAt: Date;
-    /** Last time this crop was watered */
+    /** Last time this crop was watered (bulk mode) */
     lastWateredAt?: Date;
+    /** Watering mode: 'bulk' for all-or-nothing, 'individual' for per-plant tracking */
+    wateringMode: WateringMode;
+    /** Grid layout for individual plant watering (only when wateringMode is 'individual') */
+    gridLayout?: CropGridLayout;
 }
 
 /**
@@ -45,6 +50,10 @@ export interface PersistedGardenData {
     migratedFromLegacy: boolean;
     /** Timestamp of last save */
     lastSaved: number;
+    /** Original garden layout URL/save code (for grid preview) */
+    originalLayoutUrl?: string;
+    /** Parsed garden data from the original URL (for grid preview) */
+    parsedGardenData?: import('../types/layout').ParsedGardenData;
 }
 
 /**
@@ -83,7 +92,7 @@ export interface UnifiedGardenStoreActions {
     /** Remove a crop from tracking */
     removeCrop: (cropType: string) => void;
     /** Import plants from garden planner (groups by crop type) */
-    importPlantsFromGarden: (plants: Plant[]) => void;
+    importPlantsFromGarden: (plants: Plant[], originalUrl?: string, parsedData?: import('../types/layout').ParsedGardenData) => void;
     /** Toggle watering state for a specific crop type */
     toggleCropWatered: (cropType: string) => void;
     /** Mark all crops as watered */
@@ -106,6 +115,30 @@ export interface UnifiedGardenStoreActions {
     saveAndLoadLayout: (saveCode: string, name: string, options?: { notes?: string; tags?: string[] }) => Promise<{ success: boolean; error?: string }>;
     /** Load a layout by ID and update tracked crops */
     loadLayoutById: (layoutId: string) => Promise<{ success: boolean; error?: string }>;
+    /** Set the original layout URL and parsed garden data for grid preview */
+    setOriginalLayoutData: (url: string, parsedData: import('../types/layout').ParsedGardenData) => void;
+    
+    // Grid-specific watering actions
+    /** Toggle individual plant watering by grid position */
+    togglePlantWateredByPosition: (cropType: string, row: number, col: number) => void;
+    /** Toggle individual plant watering by plant ID */
+    togglePlantWateredById: (cropType: string, plantId: string) => void;
+    /** Get grid data for watering interface */
+    getWateringGridData: () => import('./watering-grid').CompleteWateringGridState;
+    /** Water all plants in a specific crop's grid */
+    waterAllPlantsInGrid: (cropType: string) => void;
+    /** Water no plants in a specific crop's grid */
+    waterNonePlantsInGrid: (cropType: string) => void;
+    /** Switch between bulk and individual watering modes */
+    setIndividualWateringMode: (cropType: string, enabled: boolean) => void;
+    
+    // Crop database actions
+    /** Initialize crop database from JSON */
+    initializeCropDatabase: () => Promise<void>;
+    /** Get crop metadata by crop type */
+    getCropMetadata: (cropType: string) => import('./watering-grid').CropMetadata | undefined;
+    /** Get all crop metadata */
+    getAllCropMetadata: () => import('./watering-grid').CropMetadata[];
 }
 
 /**
@@ -116,12 +149,18 @@ export interface UnifiedGardenStore extends UnifiedGardenStoreActions {
     trackedCrops: TrackedCrop[];
     /** Daily watering state management */
     dailyWateringState: DailyWateringState;
+    /** Crop database with metadata for all available crops */
+    cropDatabase: import('./watering-grid').CropMetadata[];
     /** Whether the store has been initialized */
     isInitialized: boolean;
     /** Loading state for async operations */
     isLoading: boolean;
     /** Last error that occurred */
     lastError: string | null;
+    /** Original garden layout URL/save code (for grid preview) */
+    originalLayoutUrl?: string;
+    /** Parsed garden data from the original URL (for grid preview) */
+    parsedGardenData?: import('../types/layout').ParsedGardenData;
 }
 
 /**
@@ -136,7 +175,9 @@ export const validateTrackedCrop = (crop: any): crop is TrackedCrop => {
         Array.isArray(crop.plantInstances) &&
         typeof crop.totalCount === 'number' &&
         typeof crop.isWatered === 'boolean' &&
-        crop.addedAt instanceof Date
+        crop.addedAt instanceof Date &&
+        ['bulk', 'individual'].includes(crop.wateringMode) &&
+        (crop.gridLayout === undefined || typeof crop.gridLayout === 'object')
     );
 };
 
@@ -169,6 +210,8 @@ export const createTrackedCrop = (
     totalCount: source === 'manual' ? 1 : plantInstances.length,
     isWatered: false,
     addedAt: new Date(),
+    wateringMode: 'bulk', // Default to bulk watering mode
+    gridLayout: undefined, // No grid layout by default
 });
 
 export const groupPlantsByType = (plants: Plant[]): { [cropType: string]: Plant[] } => {

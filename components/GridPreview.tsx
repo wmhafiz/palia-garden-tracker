@@ -5,27 +5,38 @@ import { ParsedGardenData, GridTile } from '@/types/layout';
 import { TileComponent } from './TileComponent';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { useUnifiedGardenStore } from '@/hooks/useUnifiedGardenStore';
 
 interface GridPreviewProps {
-    gardenData: ParsedGardenData;
+    gardenData?: ParsedGardenData;
     maxWidth?: number;
     maxHeight?: number;
     onTileClick?: (tile: GridTile) => void;
     showGrid?: boolean;
     className?: string;
+    useUnifiedStore?: boolean; // New prop to use unified store data
 }
 
 export const GridPreview: React.FC<GridPreviewProps> = ({
-    gardenData,
+    gardenData: propGardenData,
     maxWidth,
     maxHeight,
     onTileClick,
     showGrid = true,
-    className = ''
+    className = '',
+    useUnifiedStore = false
 }) => {
     const [loading] = useState(false);
     const [error] = useState<string | null>(null);
     const [screenSize, setScreenSize] = useState<'sm' | 'md' | 'lg'>('lg');
+
+    // Get parsed garden data from unified store if requested
+    const storedParsedGardenData = useUnifiedGardenStore(state =>
+        useUnifiedStore ? state.parsedGardenData : null
+    );
+
+    // Use unified store data if available, otherwise use prop data
+    const gardenData = useUnifiedStore ? storedParsedGardenData : propGardenData;
 
     // Detect screen size changes
     useEffect(() => {
@@ -47,6 +58,8 @@ export const GridPreview: React.FC<GridPreviewProps> = ({
 
     // Calculate responsive dimensions and tile size
     const { tileSize, containerMaxWidth, containerMaxHeight } = useMemo(() => {
+        if (!gardenData) return { tileSize: 32, containerMaxWidth: 400, containerMaxHeight: 300 };
+        
         const { rows, columns } = gardenData.dimensions;
 
         // Responsive container dimensions
@@ -92,11 +105,11 @@ export const GridPreview: React.FC<GridPreviewProps> = ({
             containerMaxWidth: containerWidth,
             containerMaxHeight: containerHeight
         };
-    }, [gardenData.dimensions, maxWidth, maxHeight, screenSize]);
+    }, [gardenData?.dimensions, maxWidth, maxHeight, screenSize]);
 
     // Calculate grid dimensions
-    const gridWidth = gardenData.dimensions.columns * tileSize;
-    const gridHeight = gardenData.dimensions.rows * tileSize;
+    const gridWidth = gardenData ? gardenData.dimensions.columns * tileSize : 0;
+    const gridHeight = gardenData ? gardenData.dimensions.rows * tileSize : 0;
 
     const handleTileClick = (tile: GridTile) => {
         if (onTileClick) {
@@ -130,13 +143,15 @@ export const GridPreview: React.FC<GridPreviewProps> = ({
         );
     }
 
-    if (!gardenData.tiles || gardenData.tiles.length === 0) {
+    if (!gardenData || !gardenData.tiles || gardenData.tiles.length === 0) {
         return (
             <Card className={className}>
                 <CardContent className="flex items-center justify-center p-8">
                     <div className="text-center">
                         <div className="text-gray-500 mb-2">🌱 No garden data available</div>
-                        <p className="text-gray-400 text-sm">Import a garden layout to see the preview</p>
+                        <p className="text-gray-400 text-sm">
+                            {useUnifiedStore ? 'Add crops to your tracker to see the preview' : 'Import a garden layout to see the preview'}
+                        </p>
                     </div>
                 </CardContent>
             </Card>
