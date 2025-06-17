@@ -44,7 +44,7 @@ const CropListItem: React.FC<{
     rightContent?: React.ReactNode;
 }> = ({ crop, checked, onCheck, onClick, showCheckbox, rightContent }) => (
     <label
-        className={`flex items-center space-x-3 py-2 cursor-pointer border-b border-gray-200 last:border-b-0 ${onClick ? 'hover:bg-gray-800 transition' : ''}`}
+        className={`flex items-center space-x-3 py-2 cursor-pointer border-b border-border last:border-b-0 ${onClick ? 'hover:bg-accent transition' : ''}`}
         onClick={onClick}
         style={onClick ? { cursor: 'pointer' } : {}}
     >
@@ -57,10 +57,10 @@ const CropListItem: React.FC<{
                 onClick={(e) => e.stopPropagation()}
             />
         )}
-        <img src={crop.picture_url} alt={crop.name} className="w-12 h-12 object-contain rounded bg-gray-100 border border-gray-300" />
+        <img src={crop.picture_url} alt={crop.name} className="w-12 h-12 object-contain rounded bg-secondary border border-border" />
         <div className="flex-1 min-w-0">
-            <div className="font-semibold text-gray-300 truncate">{crop.name}</div>
-            <div className="text-xs text-gray-400 flex flex-wrap gap-x-2 gap-y-1 mt-1">
+            <div className="font-semibold text-foreground truncate">{crop.name}</div>
+            <div className="text-xs text-muted-foreground flex flex-wrap gap-x-2 gap-y-1 mt-1">
                 <span>⏱ {crop.harvest_time}</span>
                 <span>💰 {crop.base_value}/{crop.star_value}</span>
                 <span>🌱 {crop.garden_buff}</span>
@@ -236,15 +236,6 @@ export const MainTracker: React.FC = () => {
         }
     }, [timeData.clockTime, timeData.partOfDay, mounted]);
 
-    const getBackgroundGradient = (period: string): string => {
-        switch (period) {
-            case 'Morning': return 'from-amber-900 to-amber-700';
-            case 'Day': return 'from-sky-900 to-sky-700';
-            case 'Evening': return 'from-orange-900 to-orange-700';
-            case 'Night': return 'from-indigo-900 to-indigo-800';
-            default: return 'from-gray-900 to-gray-700';
-        }
-    };
 
     const getCycleProgress = (): number => {
         const wateredCycles = cycleWateringState.cycleHistory.filter(cycle => cycle.watered).length;
@@ -332,8 +323,8 @@ export const MainTracker: React.FC = () => {
     // Prevent hydration mismatch by not rendering until mounted
     if (!mounted) {
         return (
-            <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-700 flex items-center justify-center">
-                <div className="text-white">Loading...</div>
+            <div className="min-h-screen bg-background flex items-center justify-center">
+                <div className="text-foreground">Loading...</div>
             </div>
         );
     }
@@ -344,7 +335,7 @@ export const MainTracker: React.FC = () => {
     }
 
     return (
-        <div className={`min-h-screen bg-gradient-to-br ${getBackgroundGradient(timeData.partOfDay)} flex items-center justify-center p-4`}>
+        <div className="min-h-screen bg-background flex items-center justify-center p-4">
             {/* Migration Banner */}
             {showMigrationBanner && (
                 <MigrationBanner onMigrationComplete={() => setShowMigrationBanner(false)} />
@@ -353,7 +344,7 @@ export const MainTracker: React.FC = () => {
             <div className="w-full max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-3 px-2 sm:px-4">
                 {/* Clock SVG - hidden on small screens */}
                 <div>
-                    <Card className="bg-black/20 backdrop-blur-sm border-white/10">
+                    <Card>
                         <CardContent className="p-6">
                             <svg
                                 viewBox="0 0 200 200"
@@ -545,34 +536,34 @@ export const MainTracker: React.FC = () => {
                     <div className="mt-6 grid grid-cols-2 gap-2 text-sm max-w-[300px] mx-auto">
                         <div className="flex items-center space-x-2">
                             <div className="w-3 h-3 rounded-full bg-amber-400"></div>
-                            <span className="text-gray-300">Morning (3-6)</span>
+                            <span className="text-foreground">Morning (3-6)</span>
                         </div>
                         <div className="flex items-center space-x-2">
                             <div className="w-3 h-3 rounded-full bg-sky-300"></div>
-                            <span className="text-gray-300">Day (6-18)</span>
+                            <span className="text-foreground">Day (6-18)</span>
                         </div>
                         <div className="flex items-center space-x-2">
                             <div className="w-3 h-3 rounded-full bg-orange-500"></div>
-                            <span className="text-gray-300">Evening (18-21)</span>
+                            <span className="text-foreground">Evening (18-21)</span>
                         </div>
                         <div className="flex items-center space-x-2">
                             <div className="w-3 h-3 rounded-full bg-indigo-900 border border-indigo-300"></div>
-                            <span className="text-gray-300">Night (21-3)</span>
+                            <span className="text-foreground">Night (21-3)</span>
                         </div>
                     </div>
                 </div>
 
                 {/* Crop Watering Tracker */}
-                <Card className="mt-4 bg-black/20 backdrop-blur-sm border-white/10">
+                <Card className="mt-4">
                     <CardHeader>
                         <div className="flex items-center justify-between">
-                            <CardTitle className="text-lg font-semibold text-white">🌱 Daily Crop Watering</CardTitle>
-                            <div className="text-sm text-gray-300">Resets at 6:00 AM</div>
+                            <CardTitle className="text-lg font-semibold">🌱 Daily Crop Watering</CardTitle>
+                            <div className="text-sm text-muted-foreground">Resets at 6:00 AM</div>
                         </div>
                     </CardHeader>
                     <CardContent>
                         {trackedCrops.length === 0 ? (
-                            <div className="text-gray-400 text-center py-4">No crops tracked. </div>
+                            <div className="text-muted-foreground text-center py-4">No crops tracked. </div>
                         ) : (
                             <>
                                 <div className="flex justify-end gap-2 mb-2">
@@ -616,26 +607,26 @@ export const MainTracker: React.FC = () => {
                             </>
                         )}
                         <div className="mt-3 text-center space-x-4">
-                            <Button variant="link" className="text-blue-300" onClick={openCropModal}>Manage Tracked Crops</Button>
-                            <Button variant="link" className="text-green-300" onClick={handleImportFromPlanner}>Import from Planner</Button>
+                            <Button variant="link" onClick={openCropModal}>Manage Tracked Crops</Button>
+                            <Button variant="link" onClick={handleImportFromPlanner}>Import from Planner</Button>
                         </div>
                     </CardContent>
                 </Card>
 
                 {/* Last 5 Cycles Watering Status */}
                 <div>
-                    <Card className="mt-4 bg-black/20 backdrop-blur-sm border-white/10">
+                    <Card className="mt-4">
                         <CardHeader>
                             <div className="flex items-center justify-between">
-                                <CardTitle className="text-lg font-semibold text-white">🔄 Last 5 Cycles Status</CardTitle>
-                                <div className="text-sm text-gray-300">
+                                <CardTitle className="text-lg font-semibold">🔄 Last 5 Cycles Status</CardTitle>
+                                <div className="text-sm text-muted-foreground">
                                     {getCycleProgress()}% Complete
                                 </div>
                             </div>
                         </CardHeader>
                         <CardContent>
                             {/* Progress Bar */}
-                            <div className="mb-4 bg-gray-700/30 rounded-full h-3 overflow-hidden">
+                            <div className="mb-4 bg-secondary rounded-full h-3 overflow-hidden">
                                 <div
                                     className="h-full bg-gradient-to-r from-green-500 to-emerald-400 transition-all duration-500 ease-out"
                                     style={{ width: `${getCycleProgress()}%` }}
@@ -652,41 +643,41 @@ export const MainTracker: React.FC = () => {
                                         <div
                                             key={index}
                                             className={`relative p-3 rounded-lg text-center transition-all duration-200 ${isCurrentCycle
-                                                ? 'bg-blue-600/30 border-2 border-blue-400/50 ring-2 ring-blue-300/20'
-                                                : 'bg-gray-700/20 border border-gray-600/30'
+                                                ? 'bg-primary/10 border-2 border-primary/50 ring-2 ring-primary/20'
+                                                : 'bg-secondary border border-border'
                                                 }`}
                                         >
-                                            <div className="text-xs font-medium text-gray-300 mb-2">
+                                            <div className="text-xs font-medium text-muted-foreground mb-2">
                                                 {cycleEntry ? cycleEntry.dayText.split(' ').slice(-2).join(' ') : `C${index + 1}`}
                                             </div>
                                             <div className={`w-8 h-8 mx-auto rounded-full border-2 flex items-center justify-center transition-all duration-200 ${isWatered
                                                 ? 'bg-green-500 border-green-500 text-white'
                                                 : isCurrentCycle
-                                                    ? 'border-blue-400 text-blue-300'
-                                                    : 'border-gray-500 text-gray-400'
+                                                    ? 'border-primary text-primary'
+                                                    : 'border-muted-foreground text-muted-foreground'
                                                 }`}>
                                                 {isWatered ? '✓' : cycleEntry ? '○' : '-'}
                                             </div>
                                             {isCurrentCycle && (
-                                                <div className="absolute -top-1 -right-1 w-3 h-3 bg-blue-400 rounded-full animate-pulse"></div>
+                                                <div className="absolute -top-1 -right-1 w-3 h-3 bg-primary rounded-full animate-pulse"></div>
                                             )}
                                         </div>
                                     );
                                 })}
                             </div>
                             {/* Cycle Summary */}
-                            <div className="mt-4 p-3 bg-gray-800/30 rounded-lg">
+                            <div className="mt-4 p-3 bg-secondary rounded-lg">
                                 <div className="flex items-center justify-between text-sm">
-                                    <span className="text-gray-300">
+                                    <span className="text-foreground">
                                         Cycles Watered: {cycleWateringState.cycleHistory.filter(cycle => cycle.watered).length}/5
                                     </span>
-                                    <span className="text-gray-300">
+                                    <span className="text-foreground">
                                         Current: {getCurrentCycleStatus() ? 'Watered' : 'Not Watered'}
                                     </span>
                                 </div>
                                 {getCycleProgress() === 100 && (
                                     <div className="mt-2 p-2 bg-green-600/20 border border-green-500/30 rounded text-center">
-                                        <span className="text-green-300 font-medium text-sm">🎉 Perfect! Last 5 cycles all watered!</span>
+                                        <span className="text-green-600 font-medium text-sm">🎉 Perfect! Last 5 cycles all watered!</span>
                                     </div>
                                 )}
                             </div>
@@ -697,14 +688,14 @@ export const MainTracker: React.FC = () => {
 
             {/* Crop Modal */}
             <Dialog open={isCropModalOpen} onOpenChange={setIsCropModalOpen}>
-                <DialogContent className={`max-w-lg w-full bg-gradient-to-br ${getBackgroundGradient(timeData.partOfDay)} ${['Night', 'Evening'].includes(timeData.partOfDay) ? 'text-white' : 'text-gray-900'}`}>
+                <DialogContent className="max-w-lg w-full">
                     <DialogHeader>
-                        <DialogTitle className="text-2xl font-bold text-gray-300">Select Crops to Track</DialogTitle>
+                        <DialogTitle className="text-2xl font-bold">Select Crops to Track</DialogTitle>
                     </DialogHeader>
                     {/* Filters */}
                     <div className="flex flex-wrap gap-2 mb-4">
                         <Select value={filterBuff} onValueChange={setFilterBuff}>
-                            <SelectTrigger className="w-32 text-gray-300 bg-gray-800">
+                            <SelectTrigger className="w-32">
                                 <SelectValue placeholder="All Buffs" />
                             </SelectTrigger>
                             <SelectContent>
@@ -715,7 +706,7 @@ export const MainTracker: React.FC = () => {
                             </SelectContent>
                         </Select>
                         <Select value={filterRarity} onValueChange={setFilterRarity}>
-                            <SelectTrigger className="w-32 text-gray-300 bg-gray-800">
+                            <SelectTrigger className="w-32">
                                 <SelectValue placeholder="All Rarities" />
                             </SelectTrigger>
                             <SelectContent>
@@ -726,7 +717,7 @@ export const MainTracker: React.FC = () => {
                             </SelectContent>
                         </Select>
                         <Select value={filterGroup} onValueChange={setFilterGroup}>
-                            <SelectTrigger className="w-32 text-gray-300 bg-gray-800">
+                            <SelectTrigger className="w-32">
                                 <SelectValue placeholder="All Groups" />
                             </SelectTrigger>
                             <SelectContent>
@@ -737,7 +728,7 @@ export const MainTracker: React.FC = () => {
                             </SelectContent>
                         </Select>
                         <div className="flex items-center gap-1">
-                            <span className="text-xs text-gray-500">💰</span>
+                            <span className="text-xs text-muted-foreground">💰</span>
                             <Slider
                                 value={[filterPrice[0]]}
                                 onValueChange={(value) => setFilterPrice([value[0], filterPrice[1]])}
@@ -754,7 +745,7 @@ export const MainTracker: React.FC = () => {
                                 step={1}
                                 className="w-16"
                             />
-                            <span className="text-xs text-gray-300">{filterPrice[0]} - {filterPrice[1]}</span>
+                            <span className="text-xs text-foreground">{filterPrice[0]} - {filterPrice[1]}</span>
                         </div>
                         <Button
                             size="sm"
@@ -797,7 +788,7 @@ export const MainTracker: React.FC = () => {
                     </div>
                     <div className="max-h-72 overflow-y-auto mb-4">
                         {allCrops.length === 0 ? (
-                            <div className="text-gray-500">Loading crops...</div>
+                            <div className="text-muted-foreground">Loading crops...</div>
                         ) : (
                             <div>
                                 {filteredCrops.map((crop: any) => (
