@@ -235,34 +235,104 @@ export const GridPreview: React.FC<GridPreviewProps> = ({
                                 />
                             )}
 
-                            {/* Garden Grid */}
+                            {/* Garden Grid - Organized by Plots */}
                             <div
-                                className="relative  border-2 border-gray-300 rounded-lg overflow-hidden mx-auto"
+                                className="relative mx-auto p-4"
                                 style={{
-                                    width: gridWidth,
-                                    height: gridHeight,
                                     minWidth: screenSize === 'sm' ? '200px' : '250px',
                                     minHeight: screenSize === 'sm' ? '150px' : '200px',
                                     maxWidth: '100%'
                                 }}
                             >
-                                {gardenData.tiles.map((row, rowIndex) => (
-                                    <div
-                                        key={rowIndex}
-                                        className="flex"
-                                        style={{ height: tileSize }}
-                                    >
-                                        {row.map((tile, colIndex) => (
-                                            <div
-                                                key={`${rowIndex}-${colIndex}`}
-                                                className="flex-shrink-0"
-                                                style={{ width: tileSize, height: tileSize }}
-                                            >
-                                                {renderTileWithWateringState(tile, tileSize)}
-                                            </div>
-                                        ))}
-                                    </div>
-                                ))}
+                                {(() => {
+                                    console.log('🔍 DEBUG: Garden structure:', {
+                                        totalTileRows: gardenData.tiles.length,
+                                        totalTileColumns: gardenData.tiles[0]?.length || 0,
+                                        activePlots: gardenData.activePlots,
+                                        plotRows: gardenData.activePlots.length,
+                                        plotColumns: gardenData.activePlots[0]?.length || 0
+                                    });
+                                    return null;
+                                })()}
+
+                                {/* Render plots in a grid layout */}
+                                <div
+                                    className="grid gap-4"
+                                    style={{
+                                        gridTemplateColumns: `repeat(${gardenData.activePlots[0]?.length || 1}, 1fr)`,
+                                        gridTemplateRows: `repeat(${gardenData.activePlots.length}, 1fr)`
+                                    }}
+                                >
+                                    {gardenData.activePlots.map((plotRow, plotRowIndex) =>
+                                        plotRow.map((isPlotActive, plotColIndex) => {
+                                            if (!isPlotActive) {
+                                                // Render empty space for inactive plots
+                                                return (
+                                                    <div
+                                                        key={`plot-${plotRowIndex}-${plotColIndex}`}
+                                                        className="w-full h-full"
+                                                        style={{
+                                                            width: tileSize * 3,
+                                                            height: tileSize * 3
+                                                        }}
+                                                    />
+                                                );
+                                            }
+
+                                            // Render active plot as 3x3 grid
+                                            return (
+                                                <div
+                                                    key={`plot-${plotRowIndex}-${plotColIndex}`}
+                                                    className="border-2 border-gray-300 rounded-lg overflow-hidden bg-white"
+                                                    style={{
+                                                        width: tileSize * 3,
+                                                        height: tileSize * 3
+                                                    }}
+                                                >
+                                                    {/* Grid background for this plot */}
+                                                    {showGrid && (
+                                                        <div
+                                                            className="absolute inset-0 opacity-20 pointer-events-none"
+                                                            style={{
+                                                                backgroundImage: `
+                                                                    linear-gradient(to right, #e5e7eb 1px, transparent 1px),
+                                                                    linear-gradient(to bottom, #e5e7eb 1px, transparent 1px)
+                                                                `,
+                                                                backgroundSize: `${tileSize}px ${tileSize}px`
+                                                            }}
+                                                        />
+                                                    )}
+
+                                                    {/* Render 3x3 tiles for this plot */}
+                                                    <div className="relative grid grid-cols-3 grid-rows-3 w-full h-full">
+                                                        {Array.from({ length: 3 }, (_, pi) =>
+                                                            Array.from({ length: 3 }, (_, pj) => {
+                                                                const tileRow = plotRowIndex * 3 + pi;
+                                                                const tileCol = plotColIndex * 3 + pj;
+                                                                const tile = gardenData.tiles[tileRow]?.[tileCol];
+
+                                                                if (!tile) return null;
+
+                                                                return (
+                                                                    <div
+                                                                        key={`tile-${tileRow}-${tileCol}`}
+                                                                        className="w-full h-full"
+                                                                        style={{
+                                                                            width: tileSize,
+                                                                            height: tileSize
+                                                                        }}
+                                                                    >
+                                                                        {renderTileWithWateringState(tile, tileSize)}
+                                                                    </div>
+                                                                );
+                                                            })
+                                                        ).flat()}
+                                                    </div>
+                                                </div>
+                                            );
+                                        })
+                                    ).flat()}
+                                </div>
                             </div>
                         </div>
                     </div>
