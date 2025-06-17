@@ -72,7 +72,7 @@ export const CropWateringItem: React.FC<CropWateringItemProps> = ({
             {/* Crop Info */}
             <div className="flex-1 min-w-0">
                 <div className="flex items-center space-x-2">
-                    <div className="font-semibold text-gray-300 truncate">{displayName}</div>
+                    <div className="font-semibold truncate">{displayName}</div>
 
                     {/* Source indicator */}
                     <Badge variant={source === 'import' ? 'default' : 'secondary'} className={
@@ -85,7 +85,7 @@ export const CropWateringItem: React.FC<CropWateringItemProps> = ({
 
                     {/* Count indicator for imported crops */}
                     {totalCount > 1 && (
-                        <Badge variant="outline" className="bg-gray-100 text-gray-700">
+                        <Badge variant="outline" className="bg-gray-100">
                             {totalCount} plants
                         </Badge>
                     )}
@@ -93,7 +93,7 @@ export const CropWateringItem: React.FC<CropWateringItemProps> = ({
 
                 {/* Crop details */}
                 {showDetails && cropData && (
-                    <div className="text-xs text-gray-400 flex flex-wrap gap-x-2 gap-y-1 mt-1">
+                    <div className="text-xs flex flex-wrap gap-x-2 gap-y-1 mt-1">
                         {harvestTime && <span>⏱ {harvestTime}</span>}
                         {baseValue && starValue && <span>💰 {baseValue}/{starValue}</span>}
                         {gardenBuff && <span>🌱 {gardenBuff}</span>}
@@ -110,7 +110,7 @@ export const CropWateringItem: React.FC<CropWateringItemProps> = ({
 
                 {/* Plant instances info for imported crops */}
                 {source === 'import' && plantInstances.length > 0 && showDetails && (
-                    <div className="text-xs text-gray-400 mt-1">
+                    <div className="text-xs mt-1">
                         Plant IDs: {plantInstances.slice(0, 3).map(p => p.id).join(', ')}
                         {plantInstances.length > 3 && ` +${plantInstances.length - 3} more`}
                     </div>
@@ -127,8 +127,8 @@ export const CropWateringItem: React.FC<CropWateringItemProps> = ({
                     variant="ghost"
                     size="sm"
                     className={`w-8 h-8 rounded-full border-2 flex items-center justify-center transition-colors duration-200 ${isWatered
-                            ? 'bg-green-500 border-green-500 text-white hover:bg-green-600'
-                            : 'border-gray-400 hover:border-blue-400 hover:bg-blue-50'
+                        ? 'bg-green-500 border-green-500 text-white hover:bg-green-600'
+                        : 'border-gray-400 hover:border-blue-400 hover:bg-blue-50'
                         }`}
                     aria-label={`${isWatered ? 'Mark as not watered' : 'Mark as watered'}: ${displayName}`}
                 >
@@ -176,9 +176,9 @@ export const CompactCropWateringItem: React.FC<CropWateringItemProps> = ({
             {/* Compact Info */}
             <div className="flex-1 min-w-0">
                 <div className="flex items-center space-x-1">
-                    <span className="text-sm font-medium text-gray-300 truncate">{displayName}</span>
+                    <span className="text-sm font-medium truncate">{displayName}</span>
                     {totalCount > 1 && (
-                        <span className="text-xs text-gray-400">({totalCount})</span>
+                        <span className="text-xs">({totalCount})</span>
                     )}
                     <span className={`w-2 h-2 rounded-full ${source === 'import' ? 'bg-green-400' : 'bg-blue-400'
                         }`} title={source === 'import' ? 'Imported' : 'Manual'} />
@@ -194,8 +194,8 @@ export const CompactCropWateringItem: React.FC<CropWateringItemProps> = ({
                 variant="ghost"
                 size="sm"
                 className={`w-6 h-6 rounded-full border flex items-center justify-center text-xs transition-colors ${isWatered
-                        ? 'bg-green-500 border-green-500 text-white hover:bg-green-600'
-                        : 'border-gray-400 hover:border-blue-400'
+                    ? 'bg-green-500 border-green-500 text-white hover:bg-green-600'
+                    : 'border-gray-400 hover:border-blue-400'
                     }`}
             >
                 {isWatered ? '✓' : '○'}

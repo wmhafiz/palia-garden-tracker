@@ -80,7 +80,7 @@ export const GridPreviewTest: React.FC = () => {
             <div className="container mx-auto px-4">
                 <Card className="shadow-lg">
                     <CardHeader className="text-center">
-                        <CardTitle className="text-2xl sm:text-3xl font-bold text-gray-800">
+                        <CardTitle className="text-2xl sm:text-3xl font-bold ">
                             Responsive GridPreview Test
                         </CardTitle>
                         <p className="text-gray-600 text-sm sm:text-base">
@@ -122,12 +122,12 @@ export const GridPreviewTest: React.FC = () => {
                         </div>
 
                         {/* Responsive Info */}
-                        <Card className="bg-gray-50">
+                        <Card className="">
                             <CardHeader>
                                 <CardTitle className="text-lg">Responsive Features:</CardTitle>
                             </CardHeader>
                             <CardContent>
-                                <ul className="text-sm text-gray-600 space-y-1">
+                                <ul className="text-sm space-y-1">
                                     <li>• <strong>Small screens:</strong> Compact tiles (12-32px), 2-column legend, optimized spacing</li>
                                     <li>• <strong>Medium screens:</strong> Balanced tiles (16-40px), flexible legend layout</li>
                                     <li>• <strong>Large screens:</strong> Full-size tiles (16-48px), horizontal legend</li>

@@ -18,7 +18,6 @@ import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { ArrowLeft, Search, Star, Trash2, AlertTriangle, Download, Save, FileText } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import Header from '@/components/Header';
 
 type ImportMode = 'url' | 'saved';
 
@@ -170,9 +169,6 @@ export default function ImportPage() {
 
     return (
         <div className="min-h-screen bg-background">
-            <Header />
-
-            {/* Content */}
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
                 {!showPreview ? (
                     <Tabs value={importMode} onValueChange={(value) => setImportMode(value as ImportMode)} className="space-y-6">
@@ -198,7 +194,7 @@ export default function ImportPage() {
                                             disabled={loading}
                                             className="mt-2"
                                         />
-                                        <p className="text-xs text-gray-500 mt-1">
+                                        <p className="text-xs mt-1">
                                             Paste a Palia Garden Planner URL or save code directly
                                         </p>
                                     </div>
@@ -231,7 +227,7 @@ export default function ImportPage() {
                                     <CardTitle>Saved Layouts</CardTitle>
                                     <div className="flex gap-4 mt-4">
                                         <div className="flex-1 relative">
-                                            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                                            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4" />
                                             <Input
                                                 type="text"
                                                 placeholder="Search layouts..."
@@ -261,8 +257,8 @@ export default function ImportPage() {
                                     )}
 
                                     {savedLayouts.length === 0 ? (
-                                        <div className="text-center py-12 text-gray-500">
-                                            <FileText className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+                                        <div className="text-center py-12">
+                                            <FileText className="h-12 w-12 mx-auto mb-4" />
                                             <p className="text-lg font-medium mb-2">No saved layouts found</p>
                                             <p className="text-sm">Import and save some layouts to see them here</p>
                                         </div>
@@ -278,17 +274,17 @@ export default function ImportPage() {
                                                         <div className="flex items-start justify-between">
                                                             <div className="flex-1 min-w-0">
                                                                 <div className="flex items-center gap-2 mb-1">
-                                                                    <h3 className="font-medium text-gray-900 truncate">
+                                                                    <h3 className="font-medium truncate">
                                                                         {layout.metadata.name}
                                                                     </h3>
                                                                     {layout.isFavorite && (
                                                                         <Star className="h-4 w-4 text-yellow-500 fill-current" />
                                                                     )}
                                                                 </div>
-                                                                <p className="text-sm text-gray-600 mb-2">
+                                                                <p className="text-sm mb-2">
                                                                     {layout.metadata.description}
                                                                 </p>
-                                                                <div className="flex items-center gap-4 text-xs text-gray-500">
+                                                                <div className="flex items-center gap-4 text-xs">
                                                                     <span>{layout.metadata.plantCount} plants</span>
                                                                     <span>{layout.metadata.dimensions.rows}×{layout.metadata.dimensions.columns}</span>
                                                                     <span>{new Date(layout.metadata.lastModified).toLocaleDateString()}</span>
@@ -331,7 +327,7 @@ export default function ImportPage() {
                                     )}
 
                                     <div className="flex justify-between items-center pt-6 border-t mt-6">
-                                        <span className="text-sm text-gray-500">
+                                        <span className="text-sm">
                                             {savedLayouts.length} layout{savedLayouts.length !== 1 ? 's' : ''} found
                                         </span>
                                         <Button variant="outline" onClick={handleClose}>
@@ -367,7 +363,7 @@ export default function ImportPage() {
                         )}
 
                         {/* Load/Save Layout Form */}
-                        <Card className="bg-gray-50">
+                        <Card className="">
                             <CardHeader>
                                 <CardTitle className="text-lg">
                                     {selectedLayout ? 'Load Layout' : 'Save Layout'}
@@ -428,7 +424,7 @@ export default function ImportPage() {
                                                 onChange={(e) => setLayoutTags(e.target.value)}
                                                 placeholder="Enter tags separated by commas (e.g., farming, efficient, beginner)"
                                             />
-                                            <p className="text-xs text-gray-500 mt-1">
+                                            <p className="text-xs mt-1">
                                                 Tags help organize and search your layouts
                                             </p>
                                         </div>

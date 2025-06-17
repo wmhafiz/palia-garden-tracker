@@ -146,10 +146,10 @@ export const GridPreview: React.FC<GridPreviewProps> = ({
     return (
         <Card className={`w-full h-full ${className}`}>
             <CardHeader>
-                <CardTitle className="text-base sm:text-lg text-gray-800">
+                <CardTitle className="text-base sm:text-lg">
                     Garden Layout Preview
                 </CardTitle>
-                <p className="text-xs sm:text-sm text-gray-600">
+                <p className="text-xs sm:text-sm">
                     {gardenData.dimensions.rows} × {gardenData.dimensions.columns} plots
                     {gardenData.cropSummary.totalPlants > 0 && (
                         <span className="block sm:inline sm:ml-2">
@@ -180,7 +180,7 @@ export const GridPreview: React.FC<GridPreviewProps> = ({
 
                             {/* Garden Grid */}
                             <div
-                                className="relative bg-gray-50 border-2 border-gray-300 rounded-lg overflow-hidden mx-auto"
+                                className="relative  border-2 border-gray-300 rounded-lg overflow-hidden mx-auto"
                                 style={{
                                     width: gridWidth,
                                     height: gridHeight,
@@ -218,7 +218,7 @@ export const GridPreview: React.FC<GridPreviewProps> = ({
                     {/* Legend - Responsive layout */}
                     <div className="w-full px-4 flex-shrink-0">
                         <div className={`
-              flex flex-wrap justify-center gap-2 sm:gap-4 text-xs text-gray-600 max-w-full
+              flex flex-wrap justify-center gap-2 sm:gap-4 text-xs max-w-full
               ${screenSize === 'sm' ? 'grid grid-cols-2 gap-2' : ''}
             `}>
                             <div className="flex items-center space-x-1">
@@ -243,7 +243,7 @@ export const GridPreview: React.FC<GridPreviewProps> = ({
                     {/* Responsive Info */}
                     {tileSize < (screenSize === 'sm' ? 20 : 24) && (
                         <div className="px-4 flex-shrink-0">
-                            <p className="text-xs text-gray-500 text-center max-w-md mx-auto">
+                            <p className="text-xs text-center max-w-md mx-auto">
                                 💡 {screenSize === 'sm' ? 'Tooltips hidden on small screens' : 'Hover tooltips are hidden at this zoom level'}
                                 {screenSize !== 'sm' && gridWidth < containerMaxWidth && gridHeight < containerMaxHeight && (
                                     <span> Try expanding the preview area for more detail.</span>

@@ -76,10 +76,10 @@ export const CropSummaryComponent: React.FC<CropSummaryComponentProps> = ({
 
     if (cropSummary.totalPlants === 0) {
         return (
-            <Card className={`bg-gray-50 ${className}`}>
+            <Card className={` ${className}`}>
                 <CardContent className="p-6 text-center">
-                    <div className="text-gray-500 mb-2">🌱 No crops planted</div>
-                    <p className="text-sm text-gray-400">
+                    <div className="mb-2">🌱 No crops planted</div>
+                    <p className="text-sm">
                         Your garden is ready for planting!
                     </p>
                 </CardContent>
@@ -88,15 +88,15 @@ export const CropSummaryComponent: React.FC<CropSummaryComponentProps> = ({
     }
 
     return (
-        <Card className={`bg-white border-gray-200 ${className}`}>
+        <Card className={`${className}`}>
             {/* Header */}
             <CardHeader className="border-b border-gray-200">
                 <div className="flex items-center justify-between">
                     <div>
-                        <CardTitle className="text-lg font-semibold text-gray-800">
+                        <CardTitle className="text-lg font-semibold">
                             Crop Summary
                         </CardTitle>
-                        <p className="text-sm text-gray-600">
+                        <p className="text-sm">
                             {hideWateringStatus
                                 ? `${cropSummary.totalPlants} plants`
                                 : `${cropSummary.totalPlants} plants • ${cropSummary.plantsNeedingWater} need water`
@@ -105,10 +105,10 @@ export const CropSummaryComponent: React.FC<CropSummaryComponentProps> = ({
                     </div>
                     {!hideWateringStatus && (
                         <div className="text-right">
-                            <div className="text-2xl font-bold text-gray-800">
+                            <div className="text-2xl font-bold">
                                 {cropSummary.wateringPercentage.toFixed(0)}%
                             </div>
-                            <div className="text-xs text-gray-500">need water</div>
+                            <div className="text-xs">need water</div>
                         </div>
                     )}
                 </div>
@@ -116,7 +116,7 @@ export const CropSummaryComponent: React.FC<CropSummaryComponentProps> = ({
                 {/* Progress Bar */}
                 {!hideWateringStatus && (
                     <div className="mt-3">
-                        <div className="flex items-center justify-between text-xs text-gray-600 mb-1">
+                        <div className="flex items-center justify-between text-xs mb-1">
                             <span>Watering Progress</span>
                             <span>
                                 {cropSummary.totalPlants - cropSummary.plantsNeedingWater} / {cropSummary.totalPlants} watered
@@ -144,14 +144,14 @@ export const CropSummaryComponent: React.FC<CropSummaryComponentProps> = ({
 
             {/* Crop List */}
             <CardContent className="p-4">
-                <div className="space-y-3 max-h-64 overflow-y-auto">
+                <div className="space-y-3 max-h-122 overflow-y-auto">
                     {sortedCrops.map(([cropType, summary]) => {
                         const status = getWateringStatus(summary.needingWater, summary.total);
 
                         return (
                             <div
                                 key={cropType}
-                                className="flex items-center space-x-3 p-3 rounded-lg border border-gray-100 hover:bg-gray-50 transition-colors"
+                                className="flex items-center space-x-3 p-3 rounded-lg border border-gray-100 hover: transition-colors"
                             >
                                 {/* Crop Image */}
                                 <div className="flex-shrink-0">
@@ -169,7 +169,7 @@ export const CropSummaryComponent: React.FC<CropSummaryComponentProps> = ({
                                 {/* Crop Info */}
                                 <div className="flex-1 min-w-0">
                                     <div className="flex items-center space-x-2">
-                                        <h4 className="text-sm font-medium text-gray-800 truncate">
+                                        <h4 className="text-sm font-medium truncate">
                                             {cropType}
                                         </h4>
                                         <span className="text-xs" title={`${summary.size} crop`}>
@@ -177,7 +177,7 @@ export const CropSummaryComponent: React.FC<CropSummaryComponentProps> = ({
                                         </span>
                                     </div>
                                     <div className="flex items-center space-x-2 mt-1">
-                                        <span className="text-xs text-gray-600">
+                                        <span className="text-xs">
                                             {summary.total} plant{summary.total !== 1 ? 's' : ''}
                                         </span>
                                         {!hideWateringStatus && (
@@ -222,7 +222,7 @@ export const CropSummaryComponent: React.FC<CropSummaryComponentProps> = ({
                 {/* Summary Footer */}
                 {sortedCrops.length > 3 && (
                     <div className="mt-4 pt-3 border-t border-gray-100 text-center">
-                        <p className="text-xs text-gray-500">
+                        <p className="text-xs">
                             Showing {sortedCrops.length} crop type{sortedCrops.length !== 1 ? 's' : ''}
                         </p>
                     </div>
