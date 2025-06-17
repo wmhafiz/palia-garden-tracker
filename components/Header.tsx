@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Menu, X, Leaf } from "lucide-react";
+import ThemeToggle from "@/components/ThemeToggle";
 
 const Header = () => {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -50,10 +51,14 @@ const Header = () => {
                                 <a href={item.href}>{item.name}</a>
                             </Button>
                         ))}
+                        <div className="ml-2 pl-2 border-l border-border">
+                            <ThemeToggle />
+                        </div>
                     </nav>
 
-                    {/* Mobile Menu Button */}
-                    <div className="md:hidden">
+                    {/* Mobile Menu Button and Theme Toggle */}
+                    <div className="md:hidden flex items-center space-x-2">
+                        <ThemeToggle />
                         <Button
                             variant="ghost"
                             size="icon"
