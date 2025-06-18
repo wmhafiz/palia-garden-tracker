@@ -16,21 +16,21 @@ interface TileComponentProps {
  * Maps crop names to image filenames
  */
 const CROP_IMAGE_MAP: { [key: string]: string } = {
-    'Apple': '65px-Apple.webp',
-    'Batterfly Bean': '65px-Batterfly_Beans.webp',
-    'Blueberry': '65px-Blueberries.webp',
-    'Bok Choy': '65px-Bok_Choy.webp',
-    'Carrot': '65px-Carrot.webp',
-    'Cotton': '65px-Cotton.webp',
-    'Napa Cabbage': '65px-Napa_Cabbage.webp',
-    'Onion': '65px-Onion.webp',
-    'Potato': '65px-Potato.webp',
-    'Rice': '65px-Rice.webp',
-    'Rockhopper Pumpkin': '65px-Rockhopper_Pumpkin.webp',
-    'Spicy Pepper': '65px-Spicy_Pepper.webp',
-    'Tomato': '65px-Tomato.webp',
-    'Wheat': '65px-Wheat.webp',
-    'Corn': 'Corn.png',
+    'Apple': 'apple.webp',
+    'Batterfly Bean': 'batterfly-bean.webp',
+    'Blueberry': 'blueberry.webp',
+    'Bok Choy': 'bok-choy.webp',
+    'Carrot': 'carrot.webp',
+    'Cotton': 'cotton.webp',
+    'Napa Cabbage': 'napa-cabbage.webp',
+    'Onion': 'onion.webp',
+    'Potato': 'potato.webp',
+    'Rice': 'rice.webp',
+    'Rockhopper Pumpkin': 'rockhopper-pumpkin.webp',
+    'Spicy Pepper': 'spicy-pepper.webp',
+    'Tomato': 'tomato.webp',
+    'Wheat': 'wheat.webp',
+    'Corn': 'corn.webp',
 };
 
 /**
@@ -60,33 +60,7 @@ export const TileComponent: React.FC<TileComponentProps> = ({
 
     const getCropImage = (cropType: string): string => {
         const imageName = CROP_IMAGE_MAP[cropType];
-        return imageName ? `/images/${imageName}` : '/images/65px-Wheat.webp'; // Fallback
-    };
-
-    const getCropEmoji = (cropType: string): string => {
-        switch (cropType) {
-            case 'Corn': return '🌽';
-            case 'Tomato': return '🍅';
-            case 'Wheat': return '🌾';
-            case 'Rice': return '🌾';
-            case 'Potato': return '🥔';
-            case 'Carrot': return '🥕';
-            case 'Onion': return '🧅';
-            case 'Lettuce': return '🥬';
-            case 'Cotton': return '🌱';
-            case 'Apple': return '🍎';
-            // Removed 'Blueberry': return '🫐'; so it uses the image instead
-            case 'Bok Choy': return '🥬';
-            case 'Napa Cabbage': return '🥬';
-            case 'Spicy Pepper': return '🌶️';
-            case 'Batterfly Bean': return '🫘';
-            case 'Rockhopper Pumpkin': return '🎃';
-            default: return '';
-        }
-    };
-
-    const isEmojiCrop = (cropType: string): boolean => {
-        return getCropEmoji(cropType) !== '';
+        return imageName ? `/crops/${imageName}` : '/crops/wheat.webp'; // Fallback
     };
 
     const renderTileContent = () => {
@@ -128,22 +102,16 @@ export const TileComponent: React.FC<TileComponentProps> = ({
                 onClick={handleClick}
             >
                 {/* Crop Image */}
-                {isEmojiCrop(tile.cropType) ? (
-                    <div className="w-full h-full flex items-center justify-center text-lg p-0.5">
-                        {getCropEmoji(tile.cropType)}
-                    </div>
-                ) : (
-                    <img
-                        src={getCropImage(tile.cropType)}
-                        alt={tile.cropType}
-                        className="w-full h-full object-contain p-0.5"
-                        onError={(e) => {
-                            // Fallback to wheat image if crop image fails to load
-                            const target = e.target as HTMLImageElement;
-                            target.src = '/images/65px-Wheat.webp';
-                        }}
-                    />
-                )}
+                <img
+                    src={getCropImage(tile.cropType)}
+                    alt={tile.cropType}
+                    className="w-full h-full object-contain p-0.5"
+                    onError={(e) => {
+                        // Fallback to wheat image if crop image fails to load
+                        const target = e.target as HTMLImageElement;
+                        target.src = '/crops/wheat.webp';
+                    }}
+                />
 
                 {/* Fertilizer Indicator */}
                 {tile.fertilizerType && tile.fertilizerType !== 'None' && (
