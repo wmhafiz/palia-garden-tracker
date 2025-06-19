@@ -1,0 +1,14 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Interaction
+
+- Please use the interactive MCP tools
+- Please provide options to interactive MCP if possible
+
+# Reduce Unexpected Changes
+
+- Do not make assumption.
+- Ask more questions before executing, until you think the requirement is clear enough.
