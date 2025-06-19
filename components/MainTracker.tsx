@@ -565,7 +565,6 @@ export const MainTracker: React.FC = () => {
                 <GridPreview
                     className="w-full h-full col-span-full"
                     useUnifiedStore={true}
-                    showGrid={true}
                 />
             </div>
 

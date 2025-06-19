@@ -104,7 +104,6 @@ export const GridPreviewTest: React.FC = () => {
                         {/* Responsive GridPreview */}
                         <GridPreview
                             gardenData={gardenData}
-                            showGrid={true}
                             className="w-full"
                         />
 

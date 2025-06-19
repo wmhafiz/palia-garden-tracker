@@ -12,7 +12,6 @@ interface GridPreviewProps {
     maxWidth?: number;
     maxHeight?: number;
     onTileClick?: (tile: GridTile) => void;
-    showGrid?: boolean;
     className?: string;
     useUnifiedStore?: boolean; // New prop to use unified store data
 }
@@ -22,7 +21,6 @@ export const GridPreview: React.FC<GridPreviewProps> = ({
     maxWidth,
     maxHeight,
     onTileClick,
-    showGrid = true,
     className = '',
     useUnifiedStore = false
 }) => {
@@ -109,7 +107,7 @@ export const GridPreview: React.FC<GridPreviewProps> = ({
             containerMaxWidth: containerWidth,
             containerMaxHeight: containerHeight
         };
-    }, [gardenData?.dimensions, maxWidth, maxHeight, screenSize]);
+    }, [gardenData, gardenData?.dimensions, maxWidth, maxHeight, screenSize]);
 
     // Calculate grid dimensions
     const gridWidth = gardenData ? gardenData.dimensions.columns * tileSize : 0;
@@ -221,19 +219,7 @@ export const GridPreview: React.FC<GridPreviewProps> = ({
                     {/* Grid Container - Responsive wrapper */}
                     <div className="w-full flex justify-center px-2 sm:px-4 flex-shrink-0">
                         <div className="relative" style={{ maxWidth: '100%' }}>
-                            {/* Grid Background */}
-                            {showGrid && (
-                                <div
-                                    className="absolute inset-0 opacity-20"
-                                    style={{
-                                        backgroundImage: `
-                      linear-gradient(to right, #e5e7eb 1px, transparent 1px),
-                      linear-gradient(to bottom, #e5e7eb 1px, transparent 1px)
-                    `,
-                                        backgroundSize: `${tileSize}px ${tileSize}px`
-                                    }}
-                                />
-                            )}
+                            {/* Removed the overarching background grid overlay to show only the per-plot 3×3 grids */}
 
                             {/* Garden Grid - Organized by Plots */}
                             <div
@@ -278,19 +264,6 @@ export const GridPreview: React.FC<GridPreviewProps> = ({
                                                         height: tileSize * 3
                                                     }}
                                                 >
-                                                    {/* Grid background for this plot */}
-                                                    {showGrid && (
-                                                        <div
-                                                            className="absolute inset-0 opacity-20 pointer-events-none"
-                                                            style={{
-                                                                backgroundImage: `
-                                                                    linear-gradient(to right, #e5e7eb 1px, transparent 1px),
-                                                                    linear-gradient(to bottom, #e5e7eb 1px, transparent 1px)
-                                                                `,
-                                                                backgroundSize: `${tileSize}px ${tileSize}px`
-                                                            }}
-                                                        />
-                                                    )}
 
                                                     {/* Render 3x3 tiles for this plot */}
                                                     <div className="relative grid grid-cols-3 grid-rows-3 w-full h-full">

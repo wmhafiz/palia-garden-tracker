@@ -407,7 +407,6 @@ export const SavedLayoutsSection: React.FC<SavedLayoutsSectionProps> = ({
                             <GridPreview
                                 gardenData={previewLayout.gardenData}
                                 className="w-full"
-                                showGrid={true}
                             />
 
                             {/* Action buttons */}
