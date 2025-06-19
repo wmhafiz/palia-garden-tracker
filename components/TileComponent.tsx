@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { GridTile } from '@/types/layout';
+import { getCropByName } from '@/lib/services/cropService';
 
 interface TileComponentProps {
     tile: GridTile;
@@ -13,27 +14,6 @@ interface TileComponentProps {
 }
 
 /**
- * Maps crop names to image filenames
- */
-const CROP_IMAGE_MAP: { [key: string]: string } = {
-    'Apple': 'apple.webp',
-    'Batterfly Bean': 'batterfly-bean.webp',
-    'Blueberry': 'blueberry.webp',
-    'Bok Choy': 'bok-choy.webp',
-    'Carrot': 'carrot.webp',
-    'Cotton': 'cotton.webp',
-    'Napa Cabbage': 'napa-cabbage.webp',
-    'Onion': 'onion.webp',
-    'Potato': 'potato.webp',
-    'Rice': 'rice.webp',
-    'Rockhopper Pumpkin': 'rockhopper-pumpkin.webp',
-    'Spicy Pepper': 'spicy-pepper.webp',
-    'Tomato': 'tomato.webp',
-    'Wheat': 'wheat.webp',
-    'Corn': 'corn.webp',
-};
-
-/**
  * Fertilizer color mappings for visual indicators
  */
 const FERTILIZER_COLORS: { [key: string]: string } = {
@@ -42,6 +22,38 @@ const FERTILIZER_COLORS: { [key: string]: string } = {
     'Weed Block': '#F59E0B', // Amber
     'Harvest Boost': '#EF4444', // Red
     'Hydrate Pro': '#3B82F6', // Blue
+};
+
+/**
+ * Get crop image from new crop service or fallback to legacy mapping
+ */
+const getCropImage = (cropType: string): string => {
+    const cropData = getCropByName(cropType);
+    if (cropData?.images?.crop) {
+        return `/${cropData.images.crop}`;
+    }
+
+    // Legacy fallback mapping
+    const legacyMap: { [key: string]: string } = {
+        'Apple': 'crops/apple.webp',
+        'Batterfly Bean': 'crops/batterfly-bean.webp',
+        'Batterfly Beans': 'crops/batterfly-bean.webp',
+        'Blueberry': 'crops/blueberry.webp',
+        'Bok Choy': 'crops/bok-choy.webp',
+        'Carrot': 'crops/carrot.webp',
+        'Cotton': 'crops/cotton.webp',
+        'Napa Cabbage': 'crops/napa-cabbage.webp',
+        'Onion': 'crops/onion.webp',
+        'Potato': 'crops/potato.webp',
+        'Rice': 'crops/rice.webp',
+        'Rockhopper Pumpkin': 'crops/rockhopper-pumpkin.webp',
+        'Spicy Pepper': 'crops/spicy-pepper.webp',
+        'Tomato': 'crops/tomato.webp',
+        'Wheat': 'crops/wheat.webp',
+        'Corn': 'crops/corn.webp',
+    };
+
+    return legacyMap[cropType] ? `/${legacyMap[cropType]}` : '/crops/wheat.webp';
 };
 
 export const TileComponent: React.FC<TileComponentProps> = ({
@@ -56,11 +68,6 @@ export const TileComponent: React.FC<TileComponentProps> = ({
         if (onClick) {
             onClick(tile);
         }
-    };
-
-    const getCropImage = (cropType: string): string => {
-        const imageName = CROP_IMAGE_MAP[cropType];
-        return imageName ? `/crops/${imageName}` : '/crops/wheat.webp'; // Fallback
     };
 
     const renderTileContent = () => {
@@ -186,11 +193,16 @@ export const TileComponent: React.FC<TileComponentProps> = ({
 
     // Add tooltip if enabled and there's crop data
     if (showTooltip && tile.isActive && tile.cropType) {
+        const cropData = getCropByName(tile.cropType);
+
         return (
             <div className="group relative">
                 {tileElement}
                 <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-10">
                     <div className="font-medium">{tile.cropType}</div>
+                    {cropData?.gardenBonus && cropData.gardenBonus !== 'None' && (
+                        <div className="text-blue-300">Bonus: {cropData.gardenBonus}</div>
+                    )}
                     {tile.fertilizerType && tile.fertilizerType !== 'None' && (
                         <div className="text-gray-300">Fertilizer: {tile.fertilizerType}</div>
                     )}

@@ -3,6 +3,7 @@
 import React, { useMemo } from 'react';
 import { ParsedGardenData, GridTile } from '@/types/layout';
 import { Badge } from '@/components/ui/badge';
+import { getCropByName } from '@/lib/services/cropService';
 
 interface MiniGridPreviewProps {
     gardenData: ParsedGardenData;
@@ -18,6 +19,21 @@ interface MiniGridPreviewProps {
 const getCropColor = (cropType: string | null): string => {
     if (!cropType) return 'transparent';
 
+    // Try to get crop data from new service first
+    const cropData = getCropByName(cropType);
+    if (cropData?.gardenBonus) {
+        // Use bonus-based colors for consistency
+        const bonusColorMap = {
+            'Water Retain': '#3b82f6', // blue-500
+            'Harvest Boost': '#22c55e', // green-500
+            'Quality Boost': '#a855f7', // purple-500
+            'Weed Block': '#f97316', // orange-500
+            'Speed Boost': '#eab308', // yellow-500
+        };
+        return bonusColorMap[cropData.gardenBonus as keyof typeof bonusColorMap] || '#6b7280';
+    }
+
+    // Legacy fallback colors
     const cropColors: Record<string, string> = {
         'Tomato': '#dc2626', // red-600
         'Potato': '#a16207', // yellow-700
@@ -33,7 +49,7 @@ const getCropColor = (cropType: string | null): string => {
         'Blueberry': '#3730a3', // indigo-700
         'Spicy Pepper': '#dc2626', // red-600
         'Corn': '#eab308', // yellow-500
-        'Batterfly Beans': '#7c3aed', // violet-600
+        'Batterfly Beans': '#22c55e', // green-500 (Harvest Boost)
         'Rockhopper Pumpkin': '#ea580c', // orange-600
     };
 

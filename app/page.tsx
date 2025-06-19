@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { parseGridData } from '@/lib/services/plannerService';
 import { SavedLayout } from '@/types/layout';
@@ -16,7 +16,7 @@ import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { layoutService } from '@/lib/services/layoutService';
 
-export default function GridPreviewPage() {
+function GridPreviewPage() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const { saveAndLoadLayout, loadLayoutById, importPlantsFromGarden } = useUnifiedGardenStore();
@@ -212,5 +212,23 @@ export default function GridPreviewPage() {
         )}
       </div>
     </div>
+  );
+}
+
+function LoadingFallback() {
+  return (
+    <div className="min-h-screen bg-background">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div className="text-foreground">Loading...</div>
+      </div>
+    </div>
+  );
+}
+
+export default function Page() {
+  return (
+    <Suspense fallback={<LoadingFallback />}>
+      <GridPreviewPage />
+    </Suspense>
   );
 }

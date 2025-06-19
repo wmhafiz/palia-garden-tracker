@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
+import { getCropByName } from '@/lib/services/cropService';
 
 interface CropSummaryComponentProps {
     cropSummary: CropSummary;
@@ -16,24 +17,67 @@ interface CropSummaryComponentProps {
 }
 
 /**
- * Maps crop names to image filenames (same as TileComponent)
+ * Get crop image from new crop service or fallback to legacy mapping
  */
-const CROP_IMAGE_MAP: { [key: string]: string } = {
-    'Apple': '65px-Apple.webp',
-    'Batterfly Bean': '65px-Batterfly_Beans.webp',
-    'Blueberry': '65px-Blueberries.webp',
-    'Bok Choy': '65px-Bok_Choy.webp',
-    'Carrot': '65px-Carrot.webp',
-    'Cotton': '65px-Cotton.webp',
-    'Napa Cabbage': '65px-Napa_Cabbage.webp',
-    'Onion': '65px-Onion.webp',
-    'Potato': '65px-Potato.webp',
-    'Rice': '65px-Rice.webp',
-    'Rockhopper Pumpkin': '65px-Rockhopper_Pumpkin.webp',
-    'Spicy Pepper': '65px-Spicy_Pepper.webp',
-    'Tomato': '65px-Tomato.webp',
-    'Wheat': '65px-Wheat.webp',
-    'Corn': 'Corn.png',
+const getCropImage = (cropType: string): string => {
+    const cropData = getCropByName(cropType);
+    if (cropData?.images?.crop) {
+        return `/${cropData.images.crop}`;
+    }
+
+    // Legacy fallback mapping
+    const legacyMap: { [key: string]: string } = {
+        'Apple': 'images/65px-Apple.webp',
+        'Batterfly Bean': 'images/65px-Batterfly_Beans.webp',
+        'Batterfly Beans': 'images/65px-Batterfly_Beans.webp',
+        'Blueberry': 'images/65px-Blueberries.webp',
+        'Bok Choy': 'images/65px-Bok_Choy.webp',
+        'Carrot': 'images/65px-Carrot.webp',
+        'Cotton': 'images/65px-Cotton.webp',
+        'Napa Cabbage': 'images/65px-Napa_Cabbage.webp',
+        'Onion': 'images/65px-Onion.webp',
+        'Potato': 'images/65px-Potato.webp',
+        'Rice': 'images/65px-Rice.webp',
+        'Rockhopper Pumpkin': 'images/65px-Rockhopper_Pumpkin.webp',
+        'Spicy Pepper': 'images/65px-Spicy_Pepper.webp',
+        'Tomato': 'images/65px-Tomato.webp',
+        'Wheat': 'images/65px-Wheat.webp',
+        'Corn': 'images/Corn.png',
+    };
+
+    return legacyMap[cropType] ? `/${legacyMap[cropType]}` : '/images/65px-Wheat.webp';
+};
+
+/**
+ * Get garden bonus information for a crop
+ */
+const getCropBonusInfo = (cropType: string) => {
+    const cropData = getCropByName(cropType);
+    if (!cropData?.gardenBonus || cropData.gardenBonus === 'None') {
+        return null;
+    }
+
+    const bonusColorMap = {
+        'Water Retain': 'bg-blue-100 text-blue-800',
+        'Harvest Boost': 'bg-green-100 text-green-800',
+        'Quality Boost': 'bg-purple-100 text-purple-800',
+        'Weed Block': 'bg-orange-100 text-orange-800',
+        'Speed Boost': 'bg-yellow-100 text-yellow-800',
+    };
+
+    const bonusIconMap = {
+        'Water Retain': '💧',
+        'Harvest Boost': '📈',
+        'Quality Boost': '⭐',
+        'Weed Block': '🛡️',
+        'Speed Boost': '⚡',
+    };
+
+    return {
+        bonus: cropData.gardenBonus,
+        color: bonusColorMap[cropData.gardenBonus as keyof typeof bonusColorMap] || 'bg-gray-100 text-gray-800',
+        icon: bonusIconMap[cropData.gardenBonus as keyof typeof bonusIconMap] || '🌱'
+    };
 };
 
 export const CropSummaryComponent: React.FC<CropSummaryComponentProps> = ({
@@ -43,11 +87,6 @@ export const CropSummaryComponent: React.FC<CropSummaryComponentProps> = ({
     className = '',
     hideWateringStatus = false
 }) => {
-    const getCropImage = (cropType: string): string => {
-        const imageName = CROP_IMAGE_MAP[cropType];
-        return imageName ? `/images/${imageName}` : '/images/65px-Wheat.webp';
-    };
-
     const getSizeIcon = (size: 'single' | 'bush' | 'tree'): string => {
         switch (size) {
             case 'single': return '🌱';
@@ -147,11 +186,12 @@ export const CropSummaryComponent: React.FC<CropSummaryComponentProps> = ({
                 <div className="space-y-3 max-h-122 overflow-y-auto">
                     {sortedCrops.map(([cropType, summary]) => {
                         const status = getWateringStatus(summary.needingWater, summary.total);
+                        const bonusInfo = getCropBonusInfo(cropType);
 
                         return (
                             <div
                                 key={cropType}
-                                className="flex items-center space-x-3 p-3 rounded-lg border border-gray-100 hover: transition-colors"
+                                className="flex items-center space-x-3 p-3 rounded-lg border border-gray-100 hover:bg-gray-50 transition-colors"
                             >
                                 {/* Crop Image */}
                                 <div className="flex-shrink-0">
@@ -161,7 +201,7 @@ export const CropSummaryComponent: React.FC<CropSummaryComponentProps> = ({
                                         className="w-8 h-8 object-contain"
                                         onError={(e) => {
                                             const target = e.target as HTMLImageElement;
-                                            target.src = '/images/65px-Wheat.webp';
+                                            target.src = '/crops/wheat.webp';
                                         }}
                                     />
                                 </div>
@@ -176,12 +216,20 @@ export const CropSummaryComponent: React.FC<CropSummaryComponentProps> = ({
                                             {getSizeIcon(summary.size)}
                                         </span>
                                     </div>
-                                    <div className="flex items-center space-x-2 mt-1">
+                                    <div className="flex items-center space-x-2 mt-1 flex-wrap gap-1">
                                         <span className="text-xs">
                                             {summary.total} plant{summary.total !== 1 ? 's' : ''}
                                         </span>
+                                        {bonusInfo && (
+                                            <Badge
+                                                className={`text-xs px-2 py-0.5 ${bonusInfo.color}`}
+                                                title={`Garden Bonus: ${bonusInfo.bonus}`}
+                                            >
+                                                {bonusInfo.icon} {bonusInfo.bonus}
+                                            </Badge>
+                                        )}
                                         {!hideWateringStatus && (
-                                            <Badge className={`text-xs ${status.bgColor} ${status.color}`}>
+                                            <Badge className={`text-xs ${status.bgColor} ${status.color} whitespace-nowrap`}>
                                                 {status.text}
                                             </Badge>
                                         )}

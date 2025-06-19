@@ -1,178 +1,599 @@
 [
-    {
-        "name": "Apple",
-        "group": "Fruit",
-        "description": "Crunchy when raw and sweet when cooked, an apple a day keeps the healer away! Eat up!",
-        "rarity": "Uncommon",
-        "garden_buff": "Harvest Boost",
-        "harvest_time": "12+6+6+6 Days",
-        "base_value": 64,
-        "star_value": 96,
-        "picture_url": "images/65px-Apple.webp"
+  {
+    "name": "Tomato",
+    "gardenBonus": "Water Retain",
+    "cropSize": "Single",
+    "tilesRequired": 1,
+    "baseYield": 2,
+    "growthTime": 4,
+    "isReharvestable": true,
+    "reharvestCooldown": 2,
+    "reharvestLimit": 3,
+    "values": {
+      "crop": {
+        "base": 23,
+        "star": 34
+      },
+      "seed": {
+        "base": 40,
+        "star": 60
+      },
+      "preserve": {
+        "base": 34,
+        "star": 51
+      }
     },
-    {
-        "name": "Batterfly Beans",
-        "group": "Crop",
-        "description": "A favorite snack for the batterflies that inhabit the Elderwood. Maybe they'll be your favorite too?",
-        "rarity": "Uncommon",
-        "garden_buff": "Harvest Boost",
-        "harvest_time": "6+2+2+2 Days",
-        "base_value": 23,
-        "star_value": 34,
-        "picture_url": "images/65px-Batterfly_Beans.webp"
+    "conversionRatios": {
+      "cropsPerSeed": 3,
+      "seedsPerConversion": 2,
+      "cropsPerPreserve": 1
     },
-    {
-        "name": "Blueberry",
-        "group": "Fruit",
-        "description": "Feeling blue? Grab a handful of blueberries. They're sure to make you smile raw or baked!",
-        "rarity": "Uncommon",
-        "garden_buff": "Harvest Boost",
-        "harvest_time": "9+3+3+3 Days",
-        "base_value": 39,
-        "star_value": 58,
-        "picture_url": "images/65px-Blueberries.webp"
+    "processingTimes": {
+      "seedProcessMinutes": 30,
+      "preserveProcessMinutes": 27
     },
-    {
-        "name": "Corn",
-        "group": "Vegetables",
-        "description": "Juicy kernels of golden corn, perfect for grilling, boiling, or popping. A staple for any summer feast!",
-        "rarity": "Uncommon",
-        "garden_buff": "Water Retain",
-        "harvest_time": "6+3+3+3 Days",
-        "base_value": 41,
-        "star_value": 61,
-        "picture_url": "images/Corn.png"
+    "images": {
+      "crop": "crops/tomato.webp",
+      "seed": "seeds/tomato.webp",
+      "preserve": "jars/tomato.webp"
     },
-    {
-        "name": "Bok Choy",
-        "group": "Vegetables",
-        "description": "Not only is this veggie thick and juicy, but healthy too. Get your daily dose of vitamins with each crunch!",
-        "rarity": "Common",
-        "garden_buff": "Weed Block",
-        "harvest_time": "3 Days",
-        "base_value": 30,
-        "star_value": 45,
-        "picture_url": "images/65px-Bok_Choy.webp"
+    "tooltip": "Tomato: Water Retention",
+    "backgroundColor": "bg-water-retain/20",
+    "cropCode": "T"
+  },
+  {
+    "name": "Potato",
+    "gardenBonus": "Water Retain",
+    "cropSize": "Single",
+    "tilesRequired": 1,
+    "baseYield": 2,
+    "growthTime": 5,
+    "isReharvestable": false,
+    "values": {
+      "crop": {
+        "base": 45,
+        "star": 67
+      },
+      "seed": {
+        "base": 20,
+        "star": 30
+      },
+      "preserve": {
+        "base": 68,
+        "star": 102
+      }
     },
-    {
-        "name": "Carrot",
-        "group": "Vegetables",
-        "description": "This sweet, orange, carrot will improve your eyesight, raw or cooked. It's full of vitamin see!",
-        "rarity": "Common",
-        "garden_buff": "Weed Block",
-        "harvest_time": "3 Days",
-        "base_value": 23,
-        "star_value": 34,
-        "picture_url": "images/65px-Carrot.webp"
+    "conversionRatios": {
+      "cropsPerSeed": 1,
+      "seedsPerConversion": 4,
+      "cropsPerPreserve": 1
     },
-    {
-        "name": "Cotton",
-        "group": "Crop",
-        "description": "Fluffy cotton can be spun into fabric. This crop is not edible. Don't say you weren't warned.",
-        "rarity": "Common",
-        "garden_buff": "Quality Boost",
-        "harvest_time": "5 Days",
-        "base_value": 45,
-        "star_value": 67,
-        "picture_url": "images/65px-Cotton.webp"
+    "processingTimes": {
+      "seedProcessMinutes": 84,
+      "preserveProcessMinutes": 54
     },
-    {
-        "name": "Lettuce",
-        "group": "Vegetables",
-        "description": "Gain 135 Focus when consumed.",
-        "rarity": "Common",
-        "garden_buff": "None",
-        "harvest_time": "6 Days",
-        "base_value": 55,
-        "star_value": 82,
-        "picture_url": "images/65px-Lettuce.webp"
+    "images": {
+      "crop": "crops/potato.webp",
+      "seed": "seeds/potato.webp",
+      "preserve": "jars/potato.webp"
     },
-    {
-        "name": "Napa Cabbage",
-        "group": "Vegetables",
-        "description": "Leafy, green, and the freshest on the scene, napa cabbage is just what you need. It's delicious and nutritious no matter how you cook it!",
-        "rarity": "Common",
-        "garden_buff": "Water Retain",
-        "harvest_time": "6 Days",
-        "base_value": 40,
-        "star_value": 60,
-        "picture_url": "images/65px-Napa_Cabbage.webp"
+    "tooltip": "Potato: Water Retention",
+    "backgroundColor": "bg-water-retain/20",
+    "cropCode": "P"
+  },
+  {
+    "name": "Rice",
+    "gardenBonus": "Harvest Boost",
+    "cropSize": "Single",
+    "tilesRequired": 1,
+    "baseYield": 2,
+    "growthTime": 3,
+    "isReharvestable": true,
+    "values": {
+      "crop": {
+        "base": 27,
+        "star": 40
+      },
+      "seed": {
+        "base": 11,
+        "star": 16
+      }
     },
-    {
-        "name": "Onion",
-        "group": "Vegetables",
-        "description": "Cooked onions lend fragrant base to any dish. But some folks prefer them raw. Like Nai'o.",
-        "rarity": "Common",
-        "garden_buff": "Weed Block",
-        "harvest_time": "4 Days",
-        "base_value": 30,
-        "star_value": 45,
-        "picture_url": "images/65px-Onion.webp"
+    "conversionRatios": {
+      "cropsPerSeed": 1,
+      "seedsPerConversion": 4,
+      "cropsPerPreserve": 0
     },
-    {
-        "name": "Potato",
-        "group": "Vegetables",
-        "description": "Boil 'em, mash 'em, stick 'em in a stew! Versatile potatoes add heartiness to any cooked meal.",
-        "rarity": "Common",
-        "garden_buff": "Water Retain",
-        "harvest_time": "5 Days",
-        "base_value": 45,
-        "star_value": 67,
-        "picture_url": "images/65px-Potato.webp"
+    "processingTimes": {
+      "seedProcessMinutes": 42,
+      "preserveProcessMinutes": 0
     },
-    {
-        "name": "Rice",
-        "group": "Crop",
-        "description": "Need a satisfying, fluffy, grain to cook your dish? Well, it's rice to meet you!",
-        "rarity": "Uncommon",
-        "garden_buff": "Harvest Boost",
-        "harvest_time": "3 Days",
-        "base_value": 27,
-        "star_value": 40,
-        "picture_url": "images/65px-Rice.webp"
+    "images": {
+      "crop": "crops/rice.webp",
+      "seed": "seeds/rice.webp"
     },
-    {
-        "name": "Rockhopper Pumpkin",
-        "group": "Vegetables",
-        "description": "Which came first, the Rockhopper or the pumpkin? Scholars still can't decide.",
-        "rarity": "Common",
-        "garden_buff": "Quality Boost",
-        "harvest_time": "9+2+2+2 Days",
-        "base_value": 88,
-        "star_value": 132,
-        "picture_url": "images/65px-Rockhopper_Pumpkin.webp"
+    "tooltip": "Rice: Harvest Increase",
+    "backgroundColor": "bg-harvest-boost/20",
+    "cropCode": "R"
+  },
+  {
+    "name": "Wheat",
+    "gardenBonus": "Harvest Boost",
+    "cropSize": "Single",
+    "tilesRequired": 1,
+    "baseYield": 2,
+    "growthTime": 4,
+    "isReharvestable": false,
+    "values": {
+      "crop": {
+        "base": 33,
+        "star": 49
+      },
+      "seed": {
+        "base": 12,
+        "star": 18
+      }
     },
-    {
-        "name": "Spicy Pepper",
-        "group": "Vegetables",
-        "description": "These spicy peppers got a sick burn. Most people cook them. The truly brave eat them raw.",
-        "rarity": "Uncommon",
-        "garden_buff": "Quality Boost",
-        "harvest_time": "6+3+3+3 Days",
-        "base_value": 32,
-        "star_value": 48,
-        "picture_url": "images/65px-Spicy_Pepper.webp"
+    "conversionRatios": {
+      "cropsPerSeed": 1,
+      "seedsPerConversion": 4,
+      "cropsPerPreserve": 0
     },
-    {
-        "name": "Tomato",
-        "group": "Vegetables",
-        "description": "This juicy, red tomato may have a saucy attitude, but it tastes great either raw or cooked.",
-        "rarity": "Common",
-        "garden_buff": "Water Retain",
-        "harvest_time": "4+2+2+2 Days",
-        "base_value": 23,
-        "star_value": 34,
-        "picture_url": "images/65px-Tomato.webp"
+    "processingTimes": {
+      "seedProcessMinutes": 42,
+      "preserveProcessMinutes": 0
     },
-    {
-        "name": "Wheat",
-        "group": "Crop",
-        "description": "Fee, fi, fo, fum! Don't you worry your pretty head, just grind this wheat to bake your bread.",
-        "rarity": "Uncommon",
-        "garden_buff": "Harvest Boost",
-        "harvest_time": "4 Days",
-        "base_value": 33,
-        "star_value": 49,
-        "picture_url": "images/65px-Wheat.webp"
-    }
+    "images": {
+      "crop": "crops/wheat.webp",
+      "seed": "seeds/wheat.webp"
+    },
+    "tooltip": "Wheat: Harvest Increase",
+    "backgroundColor": "bg-harvest-boost/20",
+    "cropCode": "W"
+  },
+  {
+    "name": "Carrot",
+    "gardenBonus": "Weed Block",
+    "cropSize": "Single",
+    "tilesRequired": 1,
+    "baseYield": 2,
+    "growthTime": 3,
+    "isReharvestable": false,
+    "values": {
+      "crop": {
+        "base": 23,
+        "star": 34
+      },
+      "seed": {
+        "base": 7,
+        "star": 10
+      },
+      "preserve": {
+        "base": 34,
+        "star": 51
+      }
+    },
+    "conversionRatios": {
+      "cropsPerSeed": 1,
+      "seedsPerConversion": 4,
+      "cropsPerPreserve": 1
+    },
+    "processingTimes": {
+      "seedProcessMinutes": 18,
+      "preserveProcessMinutes": 27
+    },
+    "images": {
+      "crop": "crops/carrot.webp",
+      "seed": "seeds/carrot.webp",
+      "preserve": "jars/carrot.webp"
+    },
+    "tooltip": "Carrot: Weed Prevention",
+    "backgroundColor": "bg-weed-prevention/20",
+    "cropCode": "C"
+  },
+  {
+    "name": "Onion",
+    "gardenBonus": "Weed Block",
+    "cropSize": "Single",
+    "tilesRequired": 1,
+    "baseYield": 2,
+    "growthTime": 4,
+    "isReharvestable": false,
+    "values": {
+      "crop": {
+        "base": 30,
+        "star": 45
+      },
+      "seed": {
+        "base": 10,
+        "star": 15
+      },
+      "preserve": {
+        "base": 45,
+        "star": 67
+      }
+    },
+    "conversionRatios": {
+      "cropsPerSeed": 1,
+      "seedsPerConversion": 4,
+      "cropsPerPreserve": 1
+    },
+    "processingTimes": {
+      "seedProcessMinutes": 24,
+      "preserveProcessMinutes": 36
+    },
+    "images": {
+      "crop": "crops/onion.webp",
+      "seed": "seeds/onion.webp",
+      "preserve": "jars/onion.webp"
+    },
+    "tooltip": "Onion: Weed Prevention",
+    "backgroundColor": "bg-weed-prevention/20",
+    "cropCode": "O"
+  },
+  {
+    "name": "Cotton",
+    "gardenBonus": "Quality Boost",
+    "cropSize": "Single",
+    "tilesRequired": 1,
+    "baseYield": 2,
+    "growthTime": 5,
+    "isReharvestable": false,
+    "values": {
+      "crop": {
+        "base": 45,
+        "star": 67
+      },
+      "seed": {
+        "base": 20,
+        "star": 30
+      }
+    },
+    "conversionRatios": {
+      "cropsPerSeed": 1,
+      "seedsPerConversion": 3,
+      "cropsPerPreserve": 0
+    },
+    "processingTimes": {
+      "seedProcessMinutes": 36,
+      "preserveProcessMinutes": 0
+    },
+    "images": {
+      "crop": "crops/cotton.webp",
+      "seed": "seeds/cotton.webp"
+    },
+    "tooltip": "Cotton: Quality Increase",
+    "backgroundColor": "bg-quality-increase/20",
+    "cropCode": "Co"
+  },
+  {
+    "name": "Blueberry",
+    "gardenBonus": "Harvest Boost",
+    "cropSize": "Bush",
+    "tilesRequired": 4,
+    "baseYield": 6,
+    "growthTime": 9,
+    "isReharvestable": true,
+    "reharvestCooldown": 3,
+    "reharvestLimit": 3,
+    "values": {
+      "crop": {
+        "base": 39,
+        "star": 58
+      },
+      "seed": {
+        "base": 112,
+        "star": 168
+      },
+      "preserve": {
+        "base": 59,
+        "star": 88
+      }
+    },
+    "conversionRatios": {
+      "cropsPerSeed": 4,
+      "seedsPerConversion": 2,
+      "cropsPerPreserve": 1
+    },
+    "processingTimes": {
+      "seedProcessMinutes": 81,
+      "preserveProcessMinutes": 47.25
+    },
+    "images": {
+      "crop": "crops/blueberry.webp",
+      "seed": "seeds/blueberry.webp",
+      "preserve": "jars/blueberry.webp"
+    },
+    "tooltip": "Berry Bush: Harvest Increase. 2x2, needs 2 of a bonus for the buff to activate",
+    "backgroundColor": "bg-harvest-boost/20",
+    "cropCode": "B"
+  },
+  {
+    "name": "Apple",
+    "gardenBonus": "Harvest Boost",
+    "cropSize": "Tree",
+    "tilesRequired": 9,
+    "baseYield": 16,
+    "growthTime": 12,
+    "isReharvestable": true,
+    "reharvestCooldown": 6,
+    "reharvestLimit": 3,
+    "values": {
+      "crop": {
+        "base": 64,
+        "star": 96
+      },
+      "seed": {
+        "base": 700,
+        "star": 1050
+      },
+      "preserve": {
+        "base": 96,
+        "star": 144
+      }
+    },
+    "conversionRatios": {
+      "cropsPerSeed": 10,
+      "seedsPerConversion": 1,
+      "cropsPerPreserve": 1
+    },
+    "processingTimes": {
+      "seedProcessMinutes": 142,
+      "preserveProcessMinutes": 76
+    },
+    "images": {
+      "crop": "crops/apple.webp",
+      "seed": "seeds/apple.webp",
+      "preserve": "jars/apple.webp"
+    },
+    "tooltip": "Apple Tree: Harvest Increase. 3x3, needs 3 of a bonus for the buff to activate",
+    "backgroundColor": "bg-harvest-boost/20",
+    "cropCode": "A"
+  },
+  {
+    "name": "Corn",
+    "gardenBonus": "Harvest Boost",
+    "cropSize": "Single",
+    "tilesRequired": 1,
+    "baseYield": 2,
+    "growthTime": 5,
+    "isReharvestable": false,
+    "values": {
+      "crop": {
+        "base": 40,
+        "star": 60
+      },
+      "seed": {
+        "base": 15,
+        "star": 22
+      },
+      "preserve": {
+        "base": 60,
+        "star": 90
+      }
+    },
+    "conversionRatios": {
+      "cropsPerSeed": 1,
+      "seedsPerConversion": 4,
+      "cropsPerPreserve": 1
+    },
+    "processingTimes": {
+      "seedProcessMinutes": 48,
+      "preserveProcessMinutes": 48
+    },
+    "images": {
+      "crop": "crops/corn.webp",
+      "seed": "seeds/corn.webp",
+      "preserve": "jars/corn.webp"
+    },
+    "tooltip": "Corn: Harvest Increase",
+    "backgroundColor": "bg-harvest-boost/20",
+    "cropCode": "Cr"
+  },
+  {
+    "name": "Spicy Pepper",
+    "gardenBonus": "Quality Boost",
+    "cropSize": "Bush",
+    "tilesRequired": 4,
+    "baseYield": 6,
+    "growthTime": 6,
+    "isReharvestable": true,
+    "reharvestCooldown": 3,
+    "reharvestLimit": 3,
+    "values": {
+      "crop": {
+        "base": 32,
+        "star": 48
+      },
+      "seed": {
+        "base": 85,
+        "star": 127
+      },
+      "preserve": {
+        "base": 48,
+        "star": 72
+      }
+    },
+    "conversionRatios": {
+      "cropsPerSeed": 4,
+      "seedsPerConversion": 2,
+      "cropsPerPreserve": 1
+    },
+    "processingTimes": {
+      "seedProcessMinutes": 100,
+      "preserveProcessMinutes": 38.5
+    },
+    "images": {
+      "crop": "crops/spicy-pepper.webp",
+      "seed": "seeds/spicy-pepper.webp",
+      "preserve": "jars/spicy-pepper.webp"
+    },
+    "tooltip": "Spicy Pepper: Quality Increase. 2x2, needs 2 of a bonus for the buff to activate",
+    "backgroundColor": "bg-quality-increase/20",
+    "cropCode": "S"
+  },
+  {
+    "name": "Napa Cabbage",
+    "gardenBonus": "Water Retain",
+    "cropSize": "Single",
+    "tilesRequired": 1,
+    "baseYield": 2,
+    "growthTime": 6,
+    "isReharvestable": false,
+    "values": {
+      "crop": {
+        "base": 40,
+        "star": 60
+      },
+      "seed": {
+        "base": 10,
+        "star": 15
+      },
+      "preserve": {
+        "base": 60,
+        "star": 90
+      }
+    },
+    "conversionRatios": {
+      "cropsPerSeed": 1,
+      "seedsPerConversion": 6,
+      "cropsPerPreserve": 1
+    },
+    "processingTimes": {
+      "seedProcessMinutes": 48,
+      "preserveProcessMinutes": 48
+    },
+    "images": {
+      "crop": "crops/napa-cabbage.webp",
+      "seed": "seeds/napa-cabbage.webp",
+      "preserve": "jars/napa-cabbage.webp"
+    },
+    "tooltip": "Napa Cabbage: Water Retention",
+    "backgroundColor": "bg-water-retain/20",
+    "cropCode": "Cb"
+  },
+  {
+    "name": "Bok Choy",
+    "gardenBonus": "Weed Block",
+    "cropSize": "Single",
+    "tilesRequired": 1,
+    "baseYield": 2,
+    "growthTime": 3,
+    "isReharvestable": false,
+    "values": {
+      "crop": {
+        "base": 30,
+        "star": 45
+      },
+      "seed": {
+        "base": 15,
+        "star": 22
+      },
+      "preserve": {
+        "base": 45,
+        "star": 67
+      }
+    },
+    "conversionRatios": {
+      "cropsPerSeed": 1,
+      "seedsPerConversion": 4,
+      "cropsPerPreserve": 1
+    },
+    "processingTimes": {
+      "seedProcessMinutes": 72,
+      "preserveProcessMinutes": 36
+    },
+    "images": {
+      "crop": "crops/bok-choy.webp",
+      "seed": "seeds/bok-choy.webp",
+      "preserve": "jars/bok-choy.webp"
+    },
+    "tooltip": "Bok Choy: Weed Prevention",
+    "backgroundColor": "bg-weed-prevention/20",
+    "cropCode": "Bk"
+  },
+  {
+    "name": "Batterfly Beans",
+    "gardenBonus": "Harvest Boost",
+    "cropSize": "Bush",
+    "tilesRequired": 4,
+    "baseYield": 6,
+    "growthTime": 6,
+    "isReharvestable": true,
+    "reharvestCooldown": 2,
+    "reharvestLimit": 3,
+    "values": {
+      "crop": {
+        "base": 23,
+        "star": 34
+      },
+      "seed": {
+        "base": 90,
+        "star": 135
+      },
+      "preserve": {
+        "base": 41,
+        "star": 61
+      }
+    },
+    "conversionRatios": {
+      "cropsPerSeed": 1,
+      "seedsPerConversion": 1,
+      "cropsPerPreserve": 1
+    },
+    "processingTimes": {
+      "seedProcessMinutes": 120,
+      "preserveProcessMinutes": 33
+    },
+    "images": {
+      "crop": "crops/batterfly-bean.webp",
+      "seed": "seeds/batterfly-bean.webp",
+      "preserve": "jars/batterfly-bean.webp"
+    },
+    "tooltip": "Batterfly Beans: Harvest Increase. 2x2, needs 2 of a bonus for the buff to activate",
+    "backgroundColor": "bg-harvest-boost/20",
+    "cropCode": "Bt"
+  },
+  {
+    "name": "Rockhopper Pumpkin",
+    "gardenBonus": "Quality Boost",
+    "cropSize": "Bush",
+    "tilesRequired": 4,
+    "baseYield": 2,
+    "growthTime": 9,
+    "isReharvestable": true,
+    "reharvestCooldown": 2,
+    "reharvestLimit": 3,
+    "values": {
+      "crop": {
+        "base": 88,
+        "star": 132
+      },
+      "seed": {
+        "base": 25,
+        "star": 37
+      },
+      "preserve": {
+        "base": 101,
+        "star": 151
+      }
+    },
+    "conversionRatios": {
+      "cropsPerSeed": 1,
+      "seedsPerConversion": 4,
+      "cropsPerPreserve": 1
+    },
+    "processingTimes": {
+      "seedProcessMinutes": 100,
+      "preserveProcessMinutes": 31.5
+    },
+    "images": {
+      "crop": "crops/rockhopper-pumpkin.webp",
+      "seed": "seeds/rockhopper-pumpkin.webp",
+      "preserve": "jars/rockhopper-pumpkin.webp"
+    },
+    "tooltip": "Rockhopper Pumpkin: Quality Increase. 2x2, needs 2 of a bonus for the buff to activate",
+    "backgroundColor": "bg-quality-increase/20",
+    "cropCode": "Pm"
+  }
 ]
