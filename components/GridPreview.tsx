@@ -6,6 +6,8 @@ import { TileComponent } from './TileComponent';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { useUnifiedGardenStore } from '@/hooks/useUnifiedGardenStore';
+import { Button } from './ui/button';
+import { ExternalLink } from 'lucide-react';
 
 interface GridPreviewProps {
     gardenData?: ParsedGardenData;
@@ -201,9 +203,29 @@ export const GridPreview: React.FC<GridPreviewProps> = ({
     return (
         <Card className={`w-full h-full ${className}`}>
             <CardHeader>
-                <CardTitle className="text-base sm:text-lg">
-                    Garden Layout Preview
-                </CardTitle>
+
+                <div className="flex flex-row justify-between">
+                    <CardTitle className="text-base sm:text-lg">
+                        Garden Layout Preview
+                    </CardTitle>
+
+                    <p className="text-xs sm:text-sm">
+                        <a
+                            href={`https://palia-garden-planner.vercel.app/?layout=${gardenData.saveCode}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            <Button
+                                variant="outline"
+                                title="Open in Palia Garden Planner"
+                                className="text-xs sm:text-sm cursor-pointer"
+                            >
+                                <ExternalLink className="h-4 w-4 mr-2" />
+                                Open in Planner
+                            </Button>
+                        </a>
+                    </p>
+                </div>
                 <p className="text-xs sm:text-sm">
                     {gardenData.dimensions.rows} × {gardenData.dimensions.columns} plots
                     {gardenData.cropSummary.totalPlants > 0 && (
