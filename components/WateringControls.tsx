@@ -155,7 +155,7 @@ export const WateringControls: React.FC<WateringControlsProps> = ({
                                                 </span>
                                             )}
                                             <Badge
-                                                variant={crop.isWatered ? "default" : "secondary"}
+                                                variant={crop.isWatered ? "secondary" : "default"}
                                                 className="text-xs"
                                             >
                                                 {crop.isWatered ? 'Watered' : 'Needs Water'}
