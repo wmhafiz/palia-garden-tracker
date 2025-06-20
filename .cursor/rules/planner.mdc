@@ -1,0 +1,12 @@
+---
+description:
+globs:
+alwaysApply: true
+---
+
+This is the Palia Garden Planner repository that u could check for any missing calculation or formula:
+
+/home/hafiz/git/games/palia-tools/
+- /home/hafiz/git/games/palia-tools/assets/scripts/garden-planner
+- /home/hafiz/git/games/palia-tools/components/garden-planner
+- /home/hafiz/git/games/palia-tools/stores

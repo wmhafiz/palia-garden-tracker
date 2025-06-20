@@ -1,5 +1,6 @@
 import { Plant } from './index';
 import { WateringMode, CropGridLayout } from './watering-grid';
+import { IndividualPlot, IndividualGardenState } from './individual-plot';
 
 /**
  * Represents a tracked crop in the unified system
@@ -20,10 +21,12 @@ export interface TrackedCrop {
     addedAt: Date;
     /** Last time this crop was watered */
     lastWateredAt?: Date;
-    /** Watering mode: always 'bulk' now */
-    wateringMode: 'bulk';
+    /** Watering mode: 'bulk' or 'individual' */
+    wateringMode: 'bulk' | 'individual';
     /** Grid layout for display purposes (not used for individual watering) */
     gridLayout?: CropGridLayout;
+    /** Individual plot data (when using individual mode) */
+    individualPlots?: { [plotId: string]: IndividualPlot };
 }
 
 /**
@@ -41,7 +44,7 @@ export interface DailyWateringState {
  */
 export interface PersistedGardenData {
     /** Version for migration compatibility */
-    version: '2.0';
+    version: '2.0' | '2.1';
     /** All tracked crops */
     trackedCrops: TrackedCrop[];
     /** Daily watering state */
@@ -54,6 +57,10 @@ export interface PersistedGardenData {
     originalLayoutUrl?: string;
     /** Parsed garden data from the original URL (for grid preview) */
     parsedGardenData?: import('../types/layout').ParsedGardenData;
+    /** Individual garden state (for individual plot tracking) */
+    individualGardenState?: IndividualGardenState;
+    /** Whether individual plot tracking is enabled */
+    individualPlotsEnabled?: boolean;
 }
 
 /**
@@ -117,13 +124,13 @@ export interface UnifiedGardenStoreActions {
     loadLayoutById: (layoutId: string) => Promise<{ success: boolean; error?: string }>;
     /** Set the original layout URL and parsed garden data for grid preview */
     setOriginalLayoutData: (url: string, parsedData: import('../types/layout').ParsedGardenData) => void;
-    
+
     // Grid-specific watering actions
     /** Toggle crop watering from grid (simplified - toggles entire crop type) */
     toggleCropWateredFromGrid: (cropType: string) => void;
     /** Get grid data for watering interface */
     getWateringGridData: () => import('./watering-grid').CompleteWateringGridState;
-    
+
     // Crop database actions
     /** Initialize crop database from JSON */
     initializeCropDatabase: () => Promise<void>;
@@ -131,6 +138,36 @@ export interface UnifiedGardenStoreActions {
     getCropMetadata: (cropType: string) => import('./watering-grid').CropMetadata | undefined;
     /** Get all crop metadata */
     getAllCropMetadata: () => import('./watering-grid').CropMetadata[];
+
+    // Individual plot tracking actions
+    /** Set tracking mode for a specific crop type */
+    setTrackingMode: (cropType: string, mode: 'bulk' | 'individual') => void;
+    /** Enable/disable individual plot tracking globally */
+    setIndividualPlotsEnabled: (enabled: boolean) => void;
+    /** Add a plot to individual tracking */
+    addPlot: (cropType: string, position: { row: number; col: number }) => void;
+    /** Remove a plot from individual tracking */
+    removePlot: (cropType: string, plotId: string) => void;
+    /** Update plot data */
+    updatePlot: (cropType: string, plotId: string, updates: Partial<IndividualPlot>) => void;
+    /** Plant a crop in a specific plot */
+    plantCrop: (cropType: string, plotId: string, plantedAt?: Date) => void;
+    /** Harvest a specific plot */
+    harvestPlot: (cropType: string, plotId: string) => void;
+    /** Water a specific plot */
+    waterPlot: (cropType: string, plotId: string) => void;
+    /** Water multiple plots */
+    waterPlots: (cropType: string, plotIds: string[]) => void;
+    /** Apply fertilizer to a plot */
+    applyFertilizer: (cropType: string, plotId: string, fertilizerType: string) => void;
+    /** Remove fertilizer from a plot */
+    removeFertilizer: (cropType: string, plotId: string, fertilizerType: string) => void;
+    /** Get individual garden state */
+    getIndividualGardenState: () => IndividualGardenState | undefined;
+    /** Migrate from bulk to individual tracking */
+    migrateBulkToIndividual: (cropType: string) => void;
+    /** Migrate from individual to bulk tracking */
+    migrateIndividualToBulk: (cropType: string) => void;
 }
 
 /**
@@ -153,6 +190,10 @@ export interface UnifiedGardenStore extends UnifiedGardenStoreActions {
     originalLayoutUrl?: string;
     /** Parsed garden data from the original URL (for grid preview) */
     parsedGardenData?: import('../types/layout').ParsedGardenData;
+    /** Individual garden state (for individual plot tracking) */
+    individualGardenState?: IndividualGardenState;
+    /** Whether individual plot tracking is enabled globally */
+    individualPlotsEnabled: boolean;
 }
 
 /**
@@ -202,8 +243,9 @@ export const createTrackedCrop = (
     totalCount: source === 'manual' ? 1 : plantInstances.length,
     isWatered: false,
     addedAt: new Date(),
-    wateringMode: 'bulk', // Always bulk watering mode
+    wateringMode: 'bulk', // Default to bulk watering mode
     gridLayout: undefined, // Grid layout for display only
+    individualPlots: undefined, // Individual plots for individual mode
 });
 
 export const groupPlantsByType = (plants: Plant[]): { [cropType: string]: Plant[] } => {
@@ -231,4 +273,4 @@ export const DEFAULT_DAILY_WATERING_STATE: DailyWateringState = {
     resetTime: 6, // 6 AM
 };
 
-export const CURRENT_VERSION = '2.0' as const;
+export const CURRENT_VERSION = '2.1' as const;

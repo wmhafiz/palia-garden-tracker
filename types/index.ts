@@ -11,3 +11,9 @@ export * from './layout';
 export * from './unified';
 
 export * from './crop';
+
+// Re-export individual plot tracking types
+export * from './individual-plot';
+
+// Re-export enhanced crop types
+export * from './enhanced-crop';

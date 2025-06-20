@@ -6,6 +6,7 @@ import { MigrationBanner } from './MigrationBanner';
 import { GridPreviewTest } from './GridPreviewTest';
 import { WateringControls } from './WateringControls';
 import { GridPreview } from './GridPreview';
+import { IndividualPlotToggle } from './IndividualPlotToggle';
 import { useUnifiedGardenStore, initializeUnifiedStore } from '@/hooks/useUnifiedGardenStore';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -557,6 +558,9 @@ export const MainTracker: React.FC = () => {
                         ) : (
                             <>
                                 <WateringControls />
+                                <div className="mt-4">
+                                    <IndividualPlotToggle />
+                                </div>
                             </>
                         )}
                     </CardContent>
