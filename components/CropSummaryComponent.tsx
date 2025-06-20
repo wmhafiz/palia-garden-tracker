@@ -17,35 +17,13 @@ interface CropSummaryComponentProps {
 }
 
 /**
- * Get crop image from new crop service or fallback to legacy mapping
+ * Get crop image from new crop service
  */
-const getCropImage = (cropType: string): string => {
+const getCropImage = (cropType: string) => {
     const cropData = getCropByName(cropType);
     if (cropData?.images?.crop) {
         return `/${cropData.images.crop}`;
     }
-
-    // Legacy fallback mapping
-    const legacyMap: { [key: string]: string } = {
-        'Apple': 'images/65px-Apple.webp',
-        'Batterfly Bean': 'images/65px-Batterfly_Beans.webp',
-        'Batterfly Beans': 'images/65px-Batterfly_Beans.webp',
-        'Blueberry': 'images/65px-Blueberries.webp',
-        'Bok Choy': 'images/65px-Bok_Choy.webp',
-        'Carrot': 'images/65px-Carrot.webp',
-        'Cotton': 'images/65px-Cotton.webp',
-        'Napa Cabbage': 'images/65px-Napa_Cabbage.webp',
-        'Onion': 'images/65px-Onion.webp',
-        'Potato': 'images/65px-Potato.webp',
-        'Rice': 'images/65px-Rice.webp',
-        'Rockhopper Pumpkin': 'images/65px-Rockhopper_Pumpkin.webp',
-        'Spicy Pepper': 'images/65px-Spicy_Pepper.webp',
-        'Tomato': 'images/65px-Tomato.webp',
-        'Wheat': 'images/65px-Wheat.webp',
-        'Corn': 'images/Corn.png',
-    };
-
-    return legacyMap[cropType] ? `/${legacyMap[cropType]}` : '/images/65px-Wheat.webp';
 };
 
 /**
