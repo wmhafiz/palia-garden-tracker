@@ -209,7 +209,7 @@ export const validateTrackedCrop = (crop: any): crop is TrackedCrop => {
         typeof crop.totalCount === 'number' &&
         typeof crop.isWatered === 'boolean' &&
         crop.addedAt instanceof Date &&
-        crop.wateringMode === 'bulk' &&
+        ['bulk', 'individual'].includes(crop.wateringMode) &&
         (crop.gridLayout === undefined || typeof crop.gridLayout === 'object')
     );
 };
@@ -218,7 +218,7 @@ export const validatePersistedData = (data: any): data is PersistedGardenData =>
     return (
         typeof data === 'object' &&
         data !== null &&
-        data.version === '2.0' &&
+        (data.version === '2.0' || data.version === '2.1') &&
         Array.isArray(data.trackedCrops) &&
         data.trackedCrops.every(validateTrackedCrop) &&
         typeof data.dailyWateringState === 'object' &&
